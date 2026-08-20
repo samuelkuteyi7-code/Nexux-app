@@ -1,6 +1,44 @@
 """Pydantic request/response schemas, kept separate from the SQLAlchemy models."""
 
-from pydantic import BaseModel
+from datetime import date
+from pydantic import BaseModel, EmailStr, field_validator
+
+
+class UserRegister(BaseModel):
+    first_name: str
+    last_name: str
+    email: EmailStr
+    password: str
+    confirm_password: str
+    date_of_birth: date | None = None
+
+    @field_validator("password")
+    @classmethod
+    def password_min_length(cls, v: str) -> str:
+        if len(v) < 8:
+            raise ValueError("Password must be at least 8 characters")
+        return v
+
+
+class UserLogin(BaseModel):
+    email: EmailStr
+    password: str
+
+
+class UserOut(BaseModel):
+    id: int
+    first_name: str
+    last_name: str
+    email: str
+
+    class Config:
+        from_attributes = True
+
+
+class TokenOut(BaseModel):
+    access_token: str
+    token_type: str = "bearer"
+    user: UserOut
 
 
 class ProfileCreate(BaseModel):
