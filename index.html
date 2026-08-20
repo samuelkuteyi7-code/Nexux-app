@@ -216,7 +216,7 @@
   // backend/app/main.py, so this file can be opened directly
   // (even via file://) without a build step or proxy.
   // ==========================================================
-  const SERVER_URL = 'http://localhost:8000';
+  const SERVER_URL = '';  // same-origin: FastAPI serves this file itself
 
   let state = {
     profile: null,
@@ -229,7 +229,6 @@
   const SKILL_COLORS = ['#34D399', '#5B8DEF', '#8B5CF6', '#FBBF24', '#F87171'];
   const OPTION_TONES = ['positive', 'warning', 'neutral', 'danger'];
 
-  
   function showScreen(name) {
     document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
     document.querySelectorAll('.navitem').forEach(n => n.classList.remove('active'));
@@ -284,7 +283,7 @@
       renderHome();
       await fetchSituation();
     } catch (e) {
-      errBox.textContent = 'Something went wrong — check that the backend is running at ' + SERVER_URL;
+      errBox.textContent = 'Something went wrong — check the server is running.';
       errBox.style.display = 'block';
       btn.disabled = false;
       btn.textContent = 'Enter your world';
