@@ -1,2 +1,13 @@
+[project]
+name = "nexus-backend"
+version = "0.1.0"
+requires-python = ">=3.11"
+dependencies = [
+    "fastapi[standard]",
+    "sqlalchemy>=2.0.35",
+    "pydantic>=2.9.2",
+    "python-dotenv>=1.0.1",
+]
+
 [tool.fastapi]
 entrypoint = "app.main:app"
