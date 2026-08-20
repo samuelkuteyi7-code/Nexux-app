@@ -113,30 +113,3 @@ class WhatIfBranch(Base):
     assumptions = Column(JSON, default=list)            # list[str], stated explicitly per spec section 11
     projected_state = Column(JSON, nullable=False)      # projected outcome, never merged into real state
     created_at = Column(DateTime, default=lambda: datetime.now(timezone.utc))
-    owner = relationship("UserProfile", back_populates="worlds")
-    decisions = relationship("Decision", back_populates="world", cascade="all, delete-orphan")
-
-
-class Decision(Base):
-    __tablename__ = "decisions"
-
-    id = Column(Integer, primary_key=True, index=True)
-    world_id = Column(Integer, ForeignKey("worlds.id"), nullable=False)
-    situation = Column(String, nullable=False)
-    choice = Column(String, nullable=False)
-    consequence = Column(String, nullable=False)
-    state_delta = Column(JSON, default=dict)
-    created_at = Column(DateTime, default=lambda: datetime.now(timezone.utc))
-
-    world = relationship("World", back_populates="decisions")
-
-
-class WhatIfBranch(Base):
-    __tablename__ = "whatif_branches"
-
-    id = Column(Integer, primary_key=True, index=True)
-    world_id = Column(Integer, ForeignKey("worlds.id"), nullable=False)
-    question = Column(String, nullable=False)
-    assumptions = Column(JSON, default=list)
-    projected_state = Column(JSON, nullable=False)
-    created_at = Column(DateTime, default=lambda: datetime.now(timezone.utc))
