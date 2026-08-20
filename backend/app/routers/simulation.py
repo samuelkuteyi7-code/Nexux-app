@@ -4,16 +4,25 @@ from sqlalchemy.orm.attributes import flag_modified
 
 from app.database import get_db
 from app import models, schemas
+from app.auth import get_current_user
+from app.routers.world import _get_owned_world
 from app.simulation.engine import apply_decision
 
 router = APIRouter(prefix="/decision", tags=["decision"])
 
 
 @router.post("/", response_model=schemas.DecisionOut)
-def make_decision(payload: schemas.DecisionChoice, db: Session = Depends(get_db)):
-    world = db.get(models.World, payload.world_id)
-    if not world:
-        raise HTTPException(status_code=404, detail="World not found")
+def make_decision(
+    payload: schemas.DecisionChoice,
+    db: Session = Depends(get_db),
+    current_user: models.User = Depends(get_current_user),
+):
+    """
+    Commit a decision to a world. This is the only place real world
+    state changes - going through the simulation engine's fixed rules,
+    never directly from AI output.
+    """
+    world = _get_owned_world(payload.world_id, current_user, db)
 
     new_state, delta = apply_decision(world.state, payload.option_effects)
     world.state = new_state
@@ -33,7 +42,12 @@ def make_decision(payload: schemas.DecisionChoice, db: Session = Depends(get_db)
 
 
 @router.get("/world/{world_id}", response_model=list[schemas.DecisionOut])
-def get_decision_history(world_id: int, db: Session = Depends(get_db)):
+def get_decision_history(
+    world_id: int,
+    db: Session = Depends(get_db),
+    current_user: models.User = Depends(get_current_user),
+):
+    _get_owned_world(world_id, current_user, db)  # ownership check
     return (
         db.query(models.Decision)
         .filter(models.Decision.world_id == world_id)
