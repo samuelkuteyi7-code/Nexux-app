@@ -2,15 +2,18 @@
 AI Layer - Section 6 & 10 of the Master Spec.
 
 Responsibility: conversation, narrative, character flavor, and
-*proposing* possible situations/effects. Does NOT apply numbers
-directly - engine.py does that.
+*proposing* possible situations/effects. It does NOT apply numbers
+directly to world state - engine.py does that.
 
-Uses simple templates so the app runs with zero external dependencies.
-Swap generate_situation to call a real AI API later - keep the
-function signature the same.
+Tries a real Claude API call first (see ai_narrative.py). If no
+ANTHROPIC_API_KEY is set, or the call fails for any reason, falls
+back to the templates below - the app always keeps working either
+way.
 """
 
 import random
+
+from app.simulation.ai_narrative import generate_situation_ai
 
 SITUATION_TEMPLATES = [
     {
@@ -62,4 +65,14 @@ SITUATION_TEMPLATES = [
 
 
 def generate_situation(goal: str, skills: dict) -> dict:
+    """
+    Return a situation with named options and their (proposed) effects.
+    Tries a real, personalized AI-generated situation first; falls back
+    to templates if no API key is set or the call fails. Either way,
+    the returned shape is identical and engine.apply_decision() still
+    owns every real numeric change.
+    """
+    ai_situation = generate_situation_ai(goal, skills)
+    if ai_situation is not None:
+        return ai_situation
     return random.choice(SITUATION_TEMPLATES)
