@@ -1,0 +1,463 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NEXUS</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@600;700;800&family=Inter:wght@400;500;600;700&display=swap');
+
+  :root {
+    --bg:#0A0C16; --surface:#151830; --surface-2:#1B1E3A; --elevated:#121524;
+    --border:rgba(255,255,255,0.08); --border-strong:rgba(255,255,255,0.14);
+    --text:#F2F3FA; --muted:#9298B8; --muted2:#656B8C;
+    --violet:#8B5CF6; --blue:#5B8DEF; --grad:linear-gradient(135deg,#8B5CF6,#5B8DEF);
+    --green:#34D399; --amber:#FBBF24; --red:#F87171;
+  }
+  * { box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+  body { margin:0; font-family:'Inter',sans-serif; background:#000; color:var(--text); }
+
+  .phone-wrap { max-width:420px; margin:0 auto; min-height:100vh; background:var(--bg); position:relative; }
+  .screen { display:none; padding-bottom:82px; min-height:100vh; }
+  .screen.active { display:block; }
+
+  /* ---- onboarding ---- */
+  #onboardScreen { padding:44px 22px; background:var(--elevated); min-height:100vh; }
+  #onboardScreen .cap-big { width:52px; height:52px; border-radius:14px; background:var(--grad); display:flex; align-items:center; justify-content:center; font-size:22px; margin-bottom:16px; }
+  #onboardScreen h1 { font-family:'Space Grotesk',sans-serif; font-size:24px; margin:0 0 4px 0; }
+  #onboardScreen .sub { font-size:13px; color:var(--muted); margin-bottom:26px; }
+  #onboardScreen label { font-size:11.5px; color:var(--muted); font-weight:600; text-transform:uppercase; letter-spacing:0.4px; display:block; margin:14px 0 6px; }
+  #onboardScreen input { width:100%; padding:13px; border-radius:10px; border:1px solid var(--border-strong); background:rgba(255,255,255,0.05); color:#fff; font-size:14px; }
+  #onboardScreen input::placeholder { color:var(--muted2); }
+  #onboardScreen button.primary { width:100%; padding:14px; border:none; border-radius:12px; background:var(--grad); color:#fff; font-family:'Space Grotesk',sans-serif; font-weight:700; font-size:14px; margin-top:22px; }
+  #onboardScreen .err { background:rgba(248,113,113,0.12); color:var(--red); padding:10px 12px; border-radius:8px; font-size:12.5px; margin-bottom:10px; display:none; }
+
+  /* ---- topbar ---- */
+  .topbar { background:var(--elevated); padding:18px 18px 22px; border-radius:0 0 20px 20px; border-bottom:1px solid var(--border); }
+  .topbar .brand { display:flex; align-items:center; gap:9px; margin-bottom:16px; }
+  .brand .cap { width:30px; height:30px; border-radius:8px; background:var(--grad); display:flex; align-items:center; justify-content:center; font-size:15px; }
+  .brand .name { font-family:'Space Grotesk',sans-serif; font-weight:800; font-size:16px; }
+  .topbar .greet { font-family:'Space Grotesk',sans-serif; font-weight:700; font-size:19px; margin-bottom:3px; }
+  .topbar .sub { font-size:12.5px; color:var(--muted); }
+  .topbar .pills { display:flex; gap:8px; margin-top:12px; }
+  .pill { display:flex; align-items:center; gap:4px; padding:6px 11px; border-radius:999px; font-size:12px; font-weight:600; background:var(--surface); border:1px solid var(--border); }
+  .pill.amber { color:var(--amber); }
+  .pill.violet { color:var(--violet); }
+
+  .content { padding:16px; }
+
+  /* ---- world banner ---- */
+  .world-banner { border-radius:16px; padding:18px; background:linear-gradient(135deg, rgba(139,92,246,0.5), rgba(91,141,239,0.3)), var(--surface); border:1px solid var(--border); margin-bottom:16px; }
+  .world-banner .eyebrow { font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:0.05em; color:rgba(255,255,255,0.85); margin-bottom:5px; }
+  .world-banner h2 { font-family:'Space Grotesk',sans-serif; font-size:18px; color:#fff; margin:0 0 6px; }
+  .world-banner p { font-size:12.5px; color:rgba(255,255,255,0.85); margin:0; line-height:1.5; }
+
+  /* ---- cards / panels ---- */
+  .card { background:var(--surface); border:1px solid var(--border); border-radius:16px; padding:16px; margin-bottom:16px; }
+  .card h3 { font-family:'Space Grotesk',sans-serif; font-size:15px; margin:0 0 12px; display:flex; align-items:center; gap:6px; }
+  .empty-note { text-align:center; padding:20px 10px; color:var(--muted); font-size:12.5px; }
+
+  .situation-icon { width:40px; height:40px; border-radius:10px; background:var(--surface-2); display:flex; align-items:center; justify-content:center; font-size:18px; margin-bottom:10px; }
+  .tag { display:inline-block; font-size:11px; font-weight:600; padding:4px 10px; border-radius:999px; margin-right:6px; }
+  .tag.red { background:rgba(248,113,113,0.15); color:var(--red); }
+  .tag.amber { background:rgba(251,191,36,0.15); color:var(--amber); }
+
+  .option-btn { display:block; width:100%; text-align:left; background:var(--elevated); border:1px solid var(--border); border-radius:12px; padding:12px; margin-top:8px; cursor:pointer; color:var(--text); }
+  .option-btn:disabled { opacity:0.5; }
+  .option-btn .opt-title { font-weight:700; text-transform:capitalize; font-size:13.5px; display:block; margin-bottom:3px; }
+  .option-btn .opt-desc { font-size:12px; color:var(--muted); line-height:1.4; }
+  .option-btn.positive { border-color:rgba(52,211,153,0.4); }
+  .option-btn.warning { border-color:rgba(251,191,36,0.4); }
+  .option-btn.neutral { border-color:var(--border-strong); }
+  .option-btn.danger { border-color:rgba(248,113,113,0.4); }
+
+  .progress-track { height:8px; border-radius:999px; background:var(--elevated); overflow:hidden; }
+  .progress-fill { height:100%; background:var(--grad); border-radius:999px; }
+
+  .stat-row { display:flex; justify-content:space-between; margin-top:14px; padding-top:14px; border-top:1px solid var(--border); }
+  .stat { text-align:center; }
+  .stat .v { font-family:'Space Grotesk',sans-serif; font-size:18px; font-weight:700; }
+  .stat .l { font-size:10.5px; color:var(--muted); }
+
+  .skill-row { display:grid; grid-template-columns:80px 1fr 26px; align-items:center; gap:8px; margin-bottom:10px; }
+  .skill-row .dot { width:7px; height:7px; border-radius:50%; display:inline-block; margin-right:5px; }
+  .skill-row .name { font-size:12px; text-transform:capitalize; }
+  .skill-bar { height:6px; border-radius:999px; background:var(--elevated); overflow:hidden; }
+  .skill-bar-fill { height:100%; border-radius:999px; }
+  .skill-row .val { font-size:11.5px; font-weight:700; text-align:right; }
+
+  .log-item { font-size:12.5px; color:var(--muted); padding:8px 0; border-bottom:1px solid var(--border); }
+  .log-item:last-child { border-bottom:none; }
+
+  /* ---- what if ---- */
+  #whatifScreen textarea, #whatifScreen input { width:100%; border:1px solid var(--border-strong); border-radius:10px; padding:12px; font-size:13.5px; font-family:'Inter',sans-serif; background:var(--elevated); color:var(--text); margin-bottom:10px; }
+  #whatifScreen textarea { min-height:60px; resize:vertical; }
+  .submit-btn { width:100%; background:var(--grad); color:#fff; border:none; border-radius:12px; padding:13px; font-family:'Space Grotesk',sans-serif; font-weight:700; font-size:13.5px; margin-top:6px; }
+
+  /* ---- bottom nav ---- */
+  .bottomnav { position:fixed; bottom:0; left:50%; transform:translateX(-50%); width:100%; max-width:420px; background:var(--elevated); border-top:1px solid var(--border); display:flex; justify-content:space-around; padding:9px 0 11px; z-index:20; }
+  .navitem { text-align:center; font-size:9.5px; color:var(--muted2); font-weight:600; cursor:pointer; }
+  .navitem.active { color:var(--violet); }
+  .navitem .navicon { font-size:18px; display:block; margin-bottom:2px; }
+
+  .sub-header { display:flex; align-items:center; gap:10px; padding:16px 16px 12px; background:var(--elevated); border-bottom:1px solid var(--border); }
+  .sub-header .back { font-size:19px; cursor:pointer; color:var(--muted); }
+  .sub-header h2 { font-family:'Space Grotesk',sans-serif; font-size:16px; margin:0; }
+</style>
+</head>
+<body>
+<div class="phone-wrap">
+
+  <!-- ============ ONBOARDING ============ -->
+  <div class="screen active" id="onboardScreen">
+    <div class="cap-big">◆</div>
+    <h1>NEXUS</h1>
+    <div class="sub">Explore. Decide. Grow.</div>
+    <div class="err" id="onboardErr"></div>
+    <label>Name</label>
+    <input type="text" id="ob-name" placeholder="Your name">
+    <label>Goal</label>
+    <input type="text" id="ob-goal" placeholder="e.g. become a software developer">
+    <label>Interests (comma separated)</label>
+    <input type="text" id="ob-interests" placeholder="coding, design, business">
+    <button class="primary" onclick="submitOnboarding()" id="ob-submit-btn">Enter your world</button>
+  </div>
+
+  <!-- ============ HOME ============ -->
+  <div class="screen" id="screen-home">
+    <div class="topbar">
+      <div class="brand"><div class="cap">◆</div><div class="name">NEXUS</div></div>
+      <div class="greet" id="home-greet">Good evening 👋</div>
+      <div class="sub" id="home-daycount">Day 0 in your simulation</div>
+      <div class="pills">
+        <div class="pill amber">🔥 <span id="home-streak">-</span> day streak</div>
+        <div class="pill violet">◆ <span id="home-xp">-</span> XP</div>
+      </div>
+    </div>
+    <div class="content">
+      <div class="world-banner">
+        <div class="eyebrow">Your World</div>
+        <h2 id="home-goal">-</h2>
+        <p>Every decision here runs through the simulation engine and updates your real skills and resources.</p>
+      </div>
+
+      <div class="card" id="situation-card">
+        <div class="situation-icon">💼</div>
+        <div class="empty-note">Loading your next situation…</div>
+      </div>
+
+      <div class="card">
+        <h3>Your Progress</h3>
+        <div style="display:flex;justify-content:space-between;font-size:12.5px;font-weight:600;margin-bottom:6px;">
+          <span>World state</span><span class="l" style="color:var(--muted)">time step <span id="prog-day">0</span></span>
+        </div>
+        <div class="stat-row">
+          <div class="stat"><div class="v" id="stat-day">0</div><div class="l">Days</div></div>
+          <div class="stat"><div class="v" id="stat-decisions">0</div><div class="l">Decisions</div></div>
+          <div class="stat"><div class="v" id="stat-money">0</div><div class="l">Money</div></div>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3>Core Skills</h3>
+        <div id="skills-list"><div class="empty-note">No skills developed yet.</div></div>
+      </div>
+
+      <div class="card">
+        <h3>Recent History</h3>
+        <div id="log-list"><div class="empty-note">No decisions yet — your choices will show up here.</div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ WHAT IF ============ -->
+  <div class="screen" id="whatifScreen">
+    <div class="sub-header"><span class="back" onclick="showScreen('home')">←</span><h2>What If?</h2></div>
+    <div class="content">
+      <p style="font-size:12.5px;color:var(--muted);">Project a hypothetical path without touching your real world state.</p>
+      <label style="font-size:11.5px;color:var(--muted);font-weight:600;text-transform:uppercase;">Question</label>
+      <textarea id="wi-question" placeholder="What if I learn programming for a year?"></textarea>
+      <label style="font-size:11.5px;color:var(--muted);font-weight:600;text-transform:uppercase;">Skill to project (name)</label>
+      <input type="text" id="wi-skill" placeholder="coding">
+      <label style="font-size:11.5px;color:var(--muted);font-weight:600;text-transform:uppercase;">Skill gain per step</label>
+      <input type="text" id="wi-skill-gain" placeholder="10">
+      <label style="font-size:11.5px;color:var(--muted);font-weight:600;text-transform:uppercase;">Steps to project forward</label>
+      <input type="text" id="wi-steps" placeholder="3">
+      <button class="submit-btn" onclick="submitWhatIf()">Project outcome</button>
+      <div id="wi-result" style="margin-top:16px;"></div>
+    </div>
+  </div>
+
+  <!-- ============ PROFILE ============ -->
+  <div class="screen" id="screen-profile">
+    <div class="sub-header"><span class="back" onclick="showScreen('home')">←</span><h2>Profile</h2></div>
+    <div class="content">
+      <div class="card">
+        <h3>About you</h3>
+        <div id="profile-details" style="font-size:13px;color:var(--muted);line-height:1.8;"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ BOTTOM NAV ============ -->
+  <div class="bottomnav" id="bottomnav" style="display:none;">
+    <div class="navitem active" data-screen="home" onclick="showScreen('home')"><span class="navicon">🏠</span>Home</div>
+    <div class="navitem" data-screen="whatif" onclick="showScreen('whatif')"><span class="navicon">🔀</span>What If?</div>
+    <div class="navitem" data-screen="profile" onclick="showScreen('profile')"><span class="navicon">👤</span>Profile</div>
+  </div>
+
+</div>
+
+<script>
+  // ==========================================================
+  // Point this at your deployed FastAPI backend. For local dev
+  // with `uvicorn app.main:app --reload`, localhost:8000 is
+  // correct. CORS is already open (allow_origins=["*"]) in
+  // backend/app/main.py, so this file can be opened directly
+  // (even via file://) without a build step or proxy.
+  // ==========================================================
+  const SERVER_URL = 'http://localhost:8000';
+
+  let state = {
+    profile: null,
+    world: null,
+    situation: null,
+    decisionCount: 0,
+    log: [],
+  };
+
+  const SKILL_COLORS = ['#34D399', '#5B8DEF', '#8B5CF6', '#FBBF24', '#F87171'];
+  const OPTION_TONES = ['positive', 'warning', 'neutral', 'danger'];
+
+  function showScreen(name) {
+    document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+    document.querySelectorAll('.navitem').forEach(n => n.classList.remove('active'));
+    if (name === 'home') {
+      document.getElementById('screen-home').classList.add('active');
+      document.querySelector('.navitem[data-screen="home"]').classList.add('active');
+    } else if (name === 'whatif') {
+      document.getElementById('whatifScreen').classList.add('active');
+      document.querySelector('.navitem[data-screen="whatif"]').classList.add('active');
+    } else if (name === 'profile') {
+      document.getElementById('screen-profile').classList.add('active');
+      document.querySelector('.navitem[data-screen="profile"]').classList.add('active');
+      renderProfile();
+    }
+  }
+
+  async function submitOnboarding() {
+    const name = document.getElementById('ob-name').value.trim();
+    const goal = document.getElementById('ob-goal').value.trim();
+    const interests = document.getElementById('ob-interests').value.trim();
+    const errBox = document.getElementById('onboardErr');
+    const btn = document.getElementById('ob-submit-btn');
+
+    if (!name || !goal) {
+      errBox.textContent = 'Name and goal are required.';
+      errBox.style.display = 'block';
+      return;
+    }
+    errBox.style.display = 'none';
+    btn.disabled = true;
+    btn.textContent = 'Generating your world…';
+
+    try {
+      const profileRes = await fetch(SERVER_URL + '/profile/', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          name, goal,
+          interests: interests ? interests.split(',').map(s => s.trim()).filter(Boolean) : [],
+        }),
+      });
+      if (!profileRes.ok) throw new Error('Could not create profile');
+      state.profile = await profileRes.json();
+
+      const worldRes = await fetch(SERVER_URL + '/world/generate/' + state.profile.id, { method: 'POST' });
+      if (!worldRes.ok) throw new Error('Could not generate world');
+      state.world = await worldRes.json();
+
+      document.getElementById('onboardScreen').classList.remove('active');
+      document.getElementById('bottomnav').style.display = 'flex';
+      showScreen('home');
+      renderHome();
+      await fetchSituation();
+    } catch (e) {
+      errBox.textContent = 'Something went wrong — check that the backend is running at ' + SERVER_URL;
+      errBox.style.display = 'block';
+      btn.disabled = false;
+      btn.textContent = 'Enter your world';
+    }
+  }
+
+  function renderHome() {
+    const hour = new Date().getHours();
+    const greeting = hour < 12 ? 'Good morning' : hour < 18 ? 'Good evening' : 'Good evening';
+    document.getElementById('home-greet').textContent = `${greeting}, ${state.profile.name} 👋`;
+    document.getElementById('home-daycount').textContent = `Day ${state.world.state.time_step} in your simulation`;
+    document.getElementById('home-goal').textContent = state.world.goal;
+    document.getElementById('home-streak').textContent = '—';
+    document.getElementById('home-xp').textContent = '—';
+
+    document.getElementById('stat-day').textContent = state.world.state.time_step;
+    document.getElementById('stat-decisions').textContent = state.decisionCount;
+    document.getElementById('stat-money').textContent = state.world.state.resources.money ?? 0;
+
+    renderSkills();
+    renderLog();
+  }
+
+  function renderSkills() {
+    const skills = state.world.state.skills || {};
+    const entries = Object.entries(skills);
+    const container = document.getElementById('skills-list');
+    if (entries.length === 0) {
+      container.innerHTML = '<div class="empty-note">No skills developed yet — your first decision will start building them.</div>';
+      return;
+    }
+    container.innerHTML = entries.map(([name, val], i) => `
+      <div class="skill-row">
+        <div class="name"><span class="dot" style="background:${SKILL_COLORS[i % SKILL_COLORS.length]}"></span>${escapeHtml(name)}</div>
+        <div class="skill-bar"><div class="skill-bar-fill" style="width:${val}%;background:${SKILL_COLORS[i % SKILL_COLORS.length]}"></div></div>
+        <div class="val">${val}</div>
+      </div>
+    `).join('');
+  }
+
+  function renderLog() {
+    const container = document.getElementById('log-list');
+    if (state.log.length === 0) {
+      container.innerHTML = '<div class="empty-note">No decisions yet — your choices will show up here.</div>';
+      return;
+    }
+    container.innerHTML = state.log.slice().reverse().map(entry =>
+      `<div class="log-item">${escapeHtml(entry)}</div>`
+    ).join('');
+  }
+
+  async function fetchSituation() {
+    const card = document.getElementById('situation-card');
+    card.innerHTML = '<div class="situation-icon">💼</div><div class="empty-note">Loading your next situation…</div>';
+    try {
+      const res = await fetch(SERVER_URL + '/world/' + state.world.id + '/situation');
+      state.situation = await res.json();
+      renderSituation();
+    } catch (e) {
+      card.innerHTML = '<div class="empty-note">Could not load a situation. Pull down to try again.</div>';
+    }
+  }
+
+  function renderSituation() {
+    const card = document.getElementById('situation-card');
+    const s = state.situation;
+    const optionsHtml = Object.entries(s.options).map(([key, effects], i) => `
+      <button class="option-btn ${OPTION_TONES[i % OPTION_TONES.length]}" onclick="chooseOption('${key}')">
+        <span class="opt-title">${escapeHtml(key.replace(/_/g, ' '))}</span>
+        <span class="opt-desc">${escapeHtml(effects.log_entry || '')}</span>
+      </button>
+    `).join('');
+
+    card.innerHTML = `
+      <div class="situation-icon">💼</div>
+      <h3 style="margin-bottom:8px;">${escapeHtml(s.situation)}</h3>
+      <div style="margin-bottom:12px;">
+        <span class="tag red">Impact: High</span>
+        <span class="tag amber">Time Sensitive</span>
+      </div>
+      <div style="font-size:12.5px;font-weight:700;color:var(--muted);margin-bottom:4px;">What will you do?</div>
+      ${optionsHtml}
+    `;
+  }
+
+  async function chooseOption(key) {
+    const effects = state.situation.options[key];
+    document.querySelectorAll('.option-btn').forEach(b => b.disabled = true);
+
+    try {
+      const res = await fetch(SERVER_URL + '/decision/', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          world_id: state.world.id,
+          situation: state.situation.situation,
+          choice_key: key,
+          option_effects: effects,
+        }),
+      });
+      const decision = await res.json();
+      state.decisionCount += 1;
+      state.log.push(decision.consequence);
+
+      const worldRes = await fetch(SERVER_URL + '/world/' + state.world.id);
+      state.world = await worldRes.json();
+
+      renderHome();
+      await fetchSituation();
+    } catch (e) {
+      document.querySelectorAll('.option-btn').forEach(b => b.disabled = false);
+    }
+  }
+
+  async function submitWhatIf() {
+    const question = document.getElementById('wi-question').value.trim();
+    const skill = document.getElementById('wi-skill').value.trim() || 'coding';
+    const gain = parseInt(document.getElementById('wi-skill-gain').value) || 5;
+    const steps = parseInt(document.getElementById('wi-steps').value) || 1;
+    const resultBox = document.getElementById('wi-result');
+
+    if (!question) {
+      resultBox.innerHTML = '<div class="empty-note">Enter a question first.</div>';
+      return;
+    }
+    resultBox.innerHTML = '<div class="empty-note">Projecting…</div>';
+
+    try {
+      const res = await fetch(SERVER_URL + '/whatif/', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          world_id: state.world.id,
+          question,
+          assumptions: [`${skill} improves by ${gain} per step`, 'no unexpected setbacks'],
+          hypothetical_effects: { skills: { [skill]: gain }, log_entry: question },
+          steps,
+        }),
+      });
+      const branch = await res.json();
+      const projSkills = Object.entries(branch.projected_state.skills || {})
+        .map(([k, v]) => `${escapeHtml(k)}: ${v}`).join(', ') || 'none';
+
+      resultBox.innerHTML = `
+        <div class="card" style="margin-bottom:0;">
+          <h3>Projected outcome</h3>
+          <p style="font-size:12.5px;color:var(--muted);">Assumptions: ${branch.assumptions.map(escapeHtml).join('; ')}</p>
+          <p style="font-size:13px;">Projected skills: ${projSkills}</p>
+          <p style="font-size:13px;">Projected money: ${branch.projected_state.resources.money}</p>
+          <p style="font-size:11px;color:var(--muted2);margin-top:10px;">This is a projection only — nothing here has changed your real world state.</p>
+        </div>
+      `;
+    } catch (e) {
+      resultBox.innerHTML = '<div class="empty-note">Could not project — check the backend is reachable.</div>';
+    }
+  }
+
+  function renderProfile() {
+    const p = state.profile;
+    const w = state.world;
+    document.getElementById('profile-details').innerHTML = `
+      <div><strong style="color:var(--text)">Name:</strong> ${escapeHtml(p.name)}</div>
+      <div><strong style="color:var(--text)">Goal:</strong> ${escapeHtml(p.goal)}</div>
+      <div><strong style="color:var(--text)">Interests:</strong> ${p.interests.length ? p.interests.map(escapeHtml).join(', ') : '—'}</div>
+      <div><strong style="color:var(--text)">World day:</strong> ${w.state.time_step}</div>
+    `;
+  }
+
+  function escapeHtml(str) {
+    if (str === undefined || str === null) return '';
+    return String(str)
+      .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;').replace(/'/g, '&#039;');
+  }
+</script>
+</body>
+</html>
