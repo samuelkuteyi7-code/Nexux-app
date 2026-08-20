@@ -1,5 +1,8 @@
+import os
+
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import FileResponse
 
 from app.database import Base, engine
 from app.routers import profile, world, simulation, whatif
@@ -8,7 +11,7 @@ Base.metadata.create_all(bind=engine)
 
 app = FastAPI(
     title="NEXUS API",
-    description="AI-powered personalized simulation platform - MVP backend",
+    description="AI-powered personalized simulation platform",
     version="0.1.0",
 )
 
@@ -24,7 +27,14 @@ app.include_router(world.router)
 app.include_router(simulation.router)
 app.include_router(whatif.router)
 
+STATIC_DIR = os.path.join(os.path.dirname(__file__), "..", "static")
+
 
 @app.get("/")
 def root():
+    return FileResponse(os.path.join(STATIC_DIR, "index.html"))
+
+
+@app.get("/health")
+def health():
     return {"status": "NEXUS API running", "docs": "/docs"}
