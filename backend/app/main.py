@@ -5,7 +5,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse
 
 from app.database import Base, engine
-from app.routers import profile, world, simulation, whatif
+from app.routers import auth, profile, world, simulation, whatif
 
 Base.metadata.create_all(bind=engine)
 
@@ -22,6 +22,7 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+app.include_router(auth.router)
 app.include_router(profile.router)
 app.include_router(world.router)
 app.include_router(simulation.router)
