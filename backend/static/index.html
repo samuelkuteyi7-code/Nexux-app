@@ -21,7 +21,53 @@
   .screen { display:none; padding-bottom:82px; min-height:100vh; }
   .screen.active { display:block; }
 
-  /* ---- onboarding ---- */
+  /* ---- auth (register / sign in) ---- */
+  .auth-shell {
+    padding:36px 22px 40px; min-height:100vh;
+    background:
+      radial-gradient(circle at 15% -10%, rgba(139,92,246,0.35), transparent 45%),
+      radial-gradient(circle at 100% 10%, rgba(91,141,239,0.25), transparent 40%),
+      var(--elevated);
+  }
+  .auth-top { display:flex; justify-content:flex-end; margin-bottom:18px; }
+  .auth-top a { font-size:12.5px; color:var(--muted); text-decoration:none; }
+  .auth-top a b { color:#fff; }
+  .auth-logo { display:flex; flex-direction:column; align-items:center; margin-bottom:22px; }
+  .auth-logo .mark { width:56px; height:56px; border-radius:16px; background:var(--grad); display:flex; align-items:center; justify-content:center; font-size:26px; margin-bottom:12px; box-shadow:0 8px 30px rgba(139,92,246,0.35); }
+  .auth-logo h1 { font-family:'Space Grotesk',sans-serif; font-size:22px; margin:0; text-align:center; }
+  .auth-logo h1 span { background:var(--grad); -webkit-background-clip:text; background-clip:text; color:transparent; }
+  .auth-logo p { font-size:12.5px; color:var(--muted); margin:6px 0 0; text-align:center; }
+
+  .auth-card { background:rgba(255,255,255,0.03); border:1px solid var(--border); border-radius:18px; padding:20px; }
+  .auth-row { display:flex; gap:10px; }
+  .auth-row .field { flex:1; }
+  .field { margin-bottom:12px; }
+  .field label { font-size:11px; color:var(--muted); font-weight:600; text-transform:uppercase; letter-spacing:0.4px; display:block; margin-bottom:6px; }
+  .field input { width:100%; padding:12px 13px; border-radius:10px; border:1px solid var(--border-strong); background:rgba(255,255,255,0.05); color:#fff; font-size:14px; }
+  .field input::placeholder { color:var(--muted2); }
+  .pw-field { position:relative; }
+  .pw-field input { padding-right:40px; }
+  .pw-toggle { position:absolute; right:12px; top:38px; background:none; border:none; color:var(--muted); font-size:15px; cursor:pointer; padding:2px; }
+
+  .terms-row { display:flex; align-items:flex-start; gap:8px; margin:14px 0 6px; }
+  .terms-row input { margin-top:2px; }
+  .terms-row span { font-size:11.5px; color:var(--muted); line-height:1.5; }
+  .terms-row a { color:var(--blue); text-decoration:none; }
+
+  .auth-err { background:rgba(248,113,113,0.12); color:var(--red); padding:10px 12px; border-radius:8px; font-size:12.5px; margin-bottom:12px; display:none; }
+  .auth-submit { width:100%; padding:14px; border:none; border-radius:12px; background:var(--grad); color:#fff; font-family:'Space Grotesk',sans-serif; font-weight:700; font-size:14px; margin-top:6px; cursor:pointer; }
+  .auth-submit:disabled { opacity:0.6; }
+
+  .auth-divider { display:flex; align-items:center; gap:10px; margin:20px 0 14px; }
+  .auth-divider::before, .auth-divider::after { content:''; flex:1; height:1px; background:var(--border); }
+  .auth-divider span { font-size:11px; color:var(--muted2); }
+
+  .social-row { display:flex; gap:8px; }
+  .social-btn { flex:1; display:flex; align-items:center; justify-content:center; gap:6px; padding:11px; border-radius:10px; background:rgba(255,255,255,0.04); border:1px solid var(--border-strong); color:var(--muted); font-size:12px; opacity:0.55; cursor:not-allowed; }
+
+  .auth-footnote { text-align:center; font-size:10.5px; color:var(--muted2); margin-top:18px; line-height:1.5; }
+
+  /* ---- onboarding (goal setup, after account exists) ---- */
   #onboardScreen { padding:44px 22px; background:var(--elevated); min-height:100vh; }
   #onboardScreen .cap-big { width:52px; height:52px; border-radius:14px; background:var(--grad); display:flex; align-items:center; justify-content:center; font-size:22px; margin-bottom:16px; }
   #onboardScreen h1 { font-family:'Space Grotesk',sans-serif; font-size:24px; margin:0 0 4px 0; }
@@ -29,7 +75,7 @@
   #onboardScreen label { font-size:11.5px; color:var(--muted); font-weight:600; text-transform:uppercase; letter-spacing:0.4px; display:block; margin:14px 0 6px; }
   #onboardScreen input { width:100%; padding:13px; border-radius:10px; border:1px solid var(--border-strong); background:rgba(255,255,255,0.05); color:#fff; font-size:14px; }
   #onboardScreen input::placeholder { color:var(--muted2); }
-  #onboardScreen button.primary { width:100%; padding:14px; border:none; border-radius:12px; background:var(--grad); color:#fff; font-family:'Space Grotesk',sans-serif; font-weight:700; font-size:14px; margin-top:22px; }
+  #onboardScreen button.primary { width:100%; padding:14px; border:none; border-radius:12px; background:var(--grad); color:#fff; font-family:'Space Grotesk',sans-serif; font-weight:700; font-size:14px; margin-top:22px; cursor:pointer; }
   #onboardScreen .err { background:rgba(248,113,113,0.12); color:var(--red); padding:10px 12px; border-radius:8px; font-size:12.5px; margin-bottom:10px; display:none; }
 
   /* ---- topbar ---- */
@@ -39,10 +85,11 @@
   .brand .name { font-family:'Space Grotesk',sans-serif; font-weight:800; font-size:16px; }
   .topbar .greet { font-family:'Space Grotesk',sans-serif; font-weight:700; font-size:19px; margin-bottom:3px; }
   .topbar .sub { font-size:12.5px; color:var(--muted); }
-  .topbar .pills { display:flex; gap:8px; margin-top:12px; }
+  .topbar .pills { display:flex; gap:8px; margin-top:12px; align-items:center; }
   .pill { display:flex; align-items:center; gap:4px; padding:6px 11px; border-radius:999px; font-size:12px; font-weight:600; background:var(--surface); border:1px solid var(--border); }
   .pill.amber { color:var(--amber); }
   .pill.violet { color:var(--violet); }
+  .logout-btn { margin-left:auto; background:none; border:none; color:var(--muted); font-size:11.5px; cursor:pointer; text-decoration:underline; }
 
   .content { padding:16px; }
 
@@ -92,7 +139,7 @@
   /* ---- what if ---- */
   #whatifScreen textarea, #whatifScreen input { width:100%; border:1px solid var(--border-strong); border-radius:10px; padding:12px; font-size:13.5px; font-family:'Inter',sans-serif; background:var(--elevated); color:var(--text); margin-bottom:10px; }
   #whatifScreen textarea { min-height:60px; resize:vertical; }
-  .submit-btn { width:100%; background:var(--grad); color:#fff; border:none; border-radius:12px; padding:13px; font-family:'Space Grotesk',sans-serif; font-weight:700; font-size:13.5px; margin-top:6px; }
+  .submit-btn { width:100%; background:var(--grad); color:#fff; border:none; border-radius:12px; padding:13px; font-family:'Space Grotesk',sans-serif; font-weight:700; font-size:13.5px; margin-top:6px; cursor:pointer; }
 
   /* ---- bottom nav ---- */
   .bottomnav { position:fixed; bottom:0; left:50%; transform:translateX(-50%); width:100%; max-width:420px; background:var(--elevated); border-top:1px solid var(--border); display:flex; justify-content:space-around; padding:9px 0 11px; z-index:20; }
@@ -108,14 +155,78 @@
 <body>
 <div class="phone-wrap">
 
-  <!-- ============ ONBOARDING ============ -->
-  <div class="screen active" id="onboardScreen">
+  <!-- ============ REGISTER ============ -->
+  <div class="screen active" id="registerScreen">
+    <div class="auth-shell">
+      <div class="auth-top"><a href="#" onclick="showScreen('login');return false;">Already have an account? <b>Sign In</b></a></div>
+      <div class="auth-logo">
+        <div class="mark">◆</div>
+        <h1>Welcome to <span>NEXUS</span></h1>
+        <p>Create your account and start building your future.</p>
+      </div>
+      <div class="auth-card">
+        <div class="auth-err" id="registerErr"></div>
+        <div class="auth-row">
+          <div class="field"><label>First Name</label><input type="text" id="reg-first-name" placeholder="First name"></div>
+          <div class="field"><label>Last Name</label><input type="text" id="reg-last-name" placeholder="Last name"></div>
+        </div>
+        <div class="field"><label>Email Address</label><input type="email" id="reg-email" placeholder="you@example.com"></div>
+        <div class="field pw-field">
+          <label>Password</label>
+          <input type="password" id="reg-password" placeholder="At least 8 characters">
+          <button type="button" class="pw-toggle" onclick="togglePw('reg-password', this)">👁</button>
+        </div>
+        <div class="field pw-field">
+          <label>Confirm Password</label>
+          <input type="password" id="reg-confirm-password" placeholder="Repeat password">
+          <button type="button" class="pw-toggle" onclick="togglePw('reg-confirm-password', this)">👁</button>
+        </div>
+        <div class="field"><label>Date of Birth</label><input type="date" id="reg-dob"></div>
+        <div class="terms-row">
+          <input type="checkbox" id="reg-terms">
+          <span>I agree to the <a href="#">Terms of Service</a> and <a href="#">Privacy Policy</a></span>
+        </div>
+        <button class="auth-submit" id="reg-submit-btn" onclick="submitRegister()">Create Account</button>
+
+        <div class="auth-divider"><span>or continue with</span></div>
+        <div class="social-row">
+          <div class="social-btn" title="Not available yet">Google</div>
+          <div class="social-btn" title="Not available yet">Apple</div>
+          <div class="social-btn" title="Not available yet">Facebook</div>
+        </div>
+      </div>
+      <div class="auth-footnote">Social sign-in isn't wired up yet — use email for now. Your data is stored securely and never shared without your permission.</div>
+    </div>
+  </div>
+
+  <!-- ============ SIGN IN ============ -->
+  <div class="screen" id="loginScreen">
+    <div class="auth-shell">
+      <div class="auth-top"><a href="#" onclick="showScreen('register');return false;">New here? <b>Create Account</b></a></div>
+      <div class="auth-logo">
+        <div class="mark">◆</div>
+        <h1>Welcome back to <span>NEXUS</span></h1>
+        <p>Sign in to continue your simulation.</p>
+      </div>
+      <div class="auth-card">
+        <div class="auth-err" id="loginErr"></div>
+        <div class="field"><label>Email Address</label><input type="email" id="login-email" placeholder="you@example.com"></div>
+        <div class="field pw-field">
+          <label>Password</label>
+          <input type="password" id="login-password" placeholder="Your password">
+          <button type="button" class="pw-toggle" onclick="togglePw('login-password', this)">👁</button>
+        </div>
+        <button class="auth-submit" id="login-submit-btn" onclick="submitLogin()">Sign In</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ GOAL SETUP (after account creation) ============ -->
+  <div class="screen" id="onboardScreen">
     <div class="cap-big">◆</div>
-    <h1>NEXUS</h1>
-    <div class="sub">Explore. Decide. Grow.</div>
+    <h1>Set your goal</h1>
+    <div class="sub">This shapes the world NEXUS builds for you.</div>
     <div class="err" id="onboardErr"></div>
-    <label>Name</label>
-    <input type="text" id="ob-name" placeholder="Your name">
     <label>Goal</label>
     <input type="text" id="ob-goal" placeholder="e.g. become a software developer">
     <label>Interests (comma separated)</label>
@@ -132,6 +243,7 @@
       <div class="pills">
         <div class="pill amber">🔥 <span id="home-streak">-</span> day streak</div>
         <div class="pill violet">◆ <span id="home-xp">-</span> XP</div>
+        <button class="logout-btn" onclick="logout()">Sign out</button>
       </div>
     </div>
     <div class="content">
@@ -196,6 +308,7 @@
         <h3>About you</h3>
         <div id="profile-details" style="font-size:13px;color:var(--muted);line-height:1.8;"></div>
       </div>
+      <button class="submit-btn" style="background:var(--elevated);border:1px solid var(--border-strong);" onclick="logout()">Sign out</button>
     </div>
   </div>
 
@@ -209,16 +322,12 @@
 </div>
 
 <script>
-  // ==========================================================
-  // Point this at your deployed FastAPI backend. For local dev
-  // with `uvicorn app.main:app --reload`, localhost:8000 is
-  // correct. CORS is already open (allow_origins=["*"]) in
-  // backend/app/main.py, so this file can be opened directly
-  // (even via file://) without a build step or proxy.
-  // ==========================================================
   const SERVER_URL = '';  // same-origin: FastAPI serves this file itself
+  const TOKEN_KEY = 'nexus_token';
 
   let state = {
+    token: localStorage.getItem(TOKEN_KEY) || null,
+    user: null,
     profile: null,
     world: null,
     situation: null,
@@ -229,10 +338,28 @@
   const SKILL_COLORS = ['#34D399', '#5B8DEF', '#8B5CF6', '#FBBF24', '#F87171'];
   const OPTION_TONES = ['positive', 'warning', 'neutral', 'danger'];
 
+  function authHeaders(extra = {}) {
+    const headers = { ...extra };
+    if (state.token) headers['Authorization'] = 'Bearer ' + state.token;
+    return headers;
+  }
+
+  function togglePw(inputId, btn) {
+    const input = document.getElementById(inputId);
+    input.type = input.type === 'password' ? 'text' : 'password';
+    btn.textContent = input.type === 'password' ? '👁' : '🙈';
+  }
+
   function showScreen(name) {
     document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
     document.querySelectorAll('.navitem').forEach(n => n.classList.remove('active'));
-    if (name === 'home') {
+    if (name === 'register') {
+      document.getElementById('registerScreen').classList.add('active');
+    } else if (name === 'login') {
+      document.getElementById('loginScreen').classList.add('active');
+    } else if (name === 'onboard') {
+      document.getElementById('onboardScreen').classList.add('active');
+    } else if (name === 'home') {
       document.getElementById('screen-home').classList.add('active');
       document.querySelector('.navitem[data-screen="home"]').classList.add('active');
     } else if (name === 'whatif') {
@@ -245,15 +372,141 @@
     }
   }
 
+  function logout() {
+    localStorage.removeItem(TOKEN_KEY);
+    localStorage.removeItem('nexus_world_id');
+    state = { token: null, user: null, profile: null, world: null, situation: null, decisionCount: 0, log: [] };
+    document.getElementById('bottomnav').style.display = 'none';
+    showScreen('login');
+  }
+
+  async function submitRegister() {
+    const first_name = document.getElementById('reg-first-name').value.trim();
+    const last_name = document.getElementById('reg-last-name').value.trim();
+    const email = document.getElementById('reg-email').value.trim();
+    const password = document.getElementById('reg-password').value;
+    const confirm_password = document.getElementById('reg-confirm-password').value;
+    const dob = document.getElementById('reg-dob').value;
+    const terms = document.getElementById('reg-terms').checked;
+    const errBox = document.getElementById('registerErr');
+    const btn = document.getElementById('reg-submit-btn');
+
+    if (!first_name || !last_name || !email || !password) {
+      return showAuthErr(errBox, 'Please fill in all required fields.');
+    }
+    if (password.length < 8) {
+      return showAuthErr(errBox, 'Password must be at least 8 characters.');
+    }
+    if (password !== confirm_password) {
+      return showAuthErr(errBox, 'Passwords do not match.');
+    }
+    if (!terms) {
+      return showAuthErr(errBox, 'Please agree to the Terms of Service and Privacy Policy.');
+    }
+
+    errBox.style.display = 'none';
+    btn.disabled = true;
+    btn.textContent = 'Creating account…';
+
+    try {
+      const res = await fetch(SERVER_URL + '/auth/register', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          first_name, last_name, email, password, confirm_password,
+          date_of_birth: dob || null,
+        }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.detail || 'Registration failed');
+
+      onAuthSuccess(data);
+    } catch (e) {
+      showAuthErr(errBox, e.message || 'Something went wrong.');
+      btn.disabled = false;
+      btn.textContent = 'Create Account';
+    }
+  }
+
+  async function submitLogin() {
+    const email = document.getElementById('login-email').value.trim();
+    const password = document.getElementById('login-password').value;
+    const errBox = document.getElementById('loginErr');
+    const btn = document.getElementById('login-submit-btn');
+
+    if (!email || !password) {
+      return showAuthErr(errBox, 'Enter your email and password.');
+    }
+
+    errBox.style.display = 'none';
+    btn.disabled = true;
+    btn.textContent = 'Signing in…';
+
+    try {
+      const res = await fetch(SERVER_URL + '/auth/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, password }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.detail || 'Sign in failed');
+
+      onAuthSuccess(data);
+    } catch (e) {
+      showAuthErr(errBox, e.message || 'Something went wrong.');
+      btn.disabled = false;
+      btn.textContent = 'Sign In';
+    }
+  }
+
+  function showAuthErr(box, msg) {
+    box.textContent = msg;
+    box.style.display = 'block';
+  }
+
+  async function onAuthSuccess(data) {
+    state.token = data.access_token;
+    state.user = data.user;
+    localStorage.setItem(TOKEN_KEY, state.token);
+    await routeAfterAuth();
+  }
+
+  async function routeAfterAuth() {
+    try {
+      const profileRes = await fetch(SERVER_URL + '/profile/me', { headers: authHeaders() });
+      if (profileRes.status === 401) return logout();
+      if (profileRes.status === 404) {
+        showScreen('onboard');
+        return;
+      }
+      state.profile = await profileRes.json();
+
+      const savedWorldId = localStorage.getItem('nexus_world_id');
+      if (savedWorldId) {
+        const worldRes = await fetch(SERVER_URL + '/world/' + savedWorldId, { headers: authHeaders() });
+        if (worldRes.ok) {
+          state.world = await worldRes.json();
+          document.getElementById('bottomnav').style.display = 'flex';
+          showScreen('home');
+          renderHome();
+          await fetchSituation();
+          return;
+        }
+      }
+      showScreen('onboard');
+    } catch (e) {
+      showScreen('login');
+    }
+  }
+
   async function submitOnboarding() {
-    const name = document.getElementById('ob-name').value.trim();
     const goal = document.getElementById('ob-goal').value.trim();
     const interests = document.getElementById('ob-interests').value.trim();
     const errBox = document.getElementById('onboardErr');
     const btn = document.getElementById('ob-submit-btn');
 
-    if (!name || !goal) {
-      errBox.textContent = 'Name and goal are required.';
+    if (!goal) {
+      errBox.textContent = 'Goal is required.';
       errBox.style.display = 'block';
       return;
     }
@@ -262,22 +515,30 @@
     btn.textContent = 'Generating your world…';
 
     try {
-      const profileRes = await fetch(SERVER_URL + '/profile/', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          name, goal,
-          interests: interests ? interests.split(',').map(s => s.trim()).filter(Boolean) : [],
-        }),
-      });
-      if (!profileRes.ok) throw new Error('Could not create profile');
-      state.profile = await profileRes.json();
+      let profile = state.profile;
+      if (!profile) {
+        const profileRes = await fetch(SERVER_URL + '/profile/', {
+          method: 'POST',
+          headers: authHeaders({ 'Content-Type': 'application/json' }),
+          body: JSON.stringify({
+            name: state.user ? `${state.user.first_name} ${state.user.last_name}` : 'You',
+            goal,
+            interests: interests ? interests.split(',').map(s => s.trim()).filter(Boolean) : [],
+          }),
+        });
+        if (!profileRes.ok) throw new Error('Could not create profile');
+        profile = await profileRes.json();
+      }
+      state.profile = profile;
 
-      const worldRes = await fetch(SERVER_URL + '/world/generate/' + state.profile.id, { method: 'POST' });
+      const worldRes = await fetch(SERVER_URL + '/world/generate/' + profile.id, {
+        method: 'POST',
+        headers: authHeaders(),
+      });
       if (!worldRes.ok) throw new Error('Could not generate world');
       state.world = await worldRes.json();
+      localStorage.setItem('nexus_world_id', state.world.id);
 
-      document.getElementById('onboardScreen').classList.remove('active');
       document.getElementById('bottomnav').style.display = 'flex';
       showScreen('home');
       renderHome();
@@ -293,7 +554,8 @@
   function renderHome() {
     const hour = new Date().getHours();
     const greeting = hour < 12 ? 'Good morning' : hour < 18 ? 'Good evening' : 'Good evening';
-    document.getElementById('home-greet').textContent = `${greeting}, ${state.profile.name} 👋`;
+    const displayName = state.profile ? state.profile.name : (state.user ? state.user.first_name : 'there');
+    document.getElementById('home-greet').textContent = `${greeting}, ${displayName} 👋`;
     document.getElementById('home-daycount').textContent = `Day ${state.world.state.time_step} in your simulation`;
     document.getElementById('home-goal').textContent = state.world.goal;
     document.getElementById('home-streak').textContent = '—';
@@ -339,7 +601,7 @@
     const card = document.getElementById('situation-card');
     card.innerHTML = '<div class="situation-icon">💼</div><div class="empty-note">Loading your next situation…</div>';
     try {
-      const res = await fetch(SERVER_URL + '/world/' + state.world.id + '/situation');
+      const res = await fetch(SERVER_URL + '/world/' + state.world.id + '/situation', { headers: authHeaders() });
       state.situation = await res.json();
       renderSituation();
     } catch (e) {
@@ -376,7 +638,7 @@
     try {
       const res = await fetch(SERVER_URL + '/decision/', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: authHeaders({ 'Content-Type': 'application/json' }),
         body: JSON.stringify({
           world_id: state.world.id,
           situation: state.situation.situation,
@@ -388,7 +650,7 @@
       state.decisionCount += 1;
       state.log.push(decision.consequence);
 
-      const worldRes = await fetch(SERVER_URL + '/world/' + state.world.id);
+      const worldRes = await fetch(SERVER_URL + '/world/' + state.world.id, { headers: authHeaders() });
       state.world = await worldRes.json();
 
       renderHome();
@@ -414,7 +676,7 @@
     try {
       const res = await fetch(SERVER_URL + '/whatif/', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: authHeaders({ 'Content-Type': 'application/json' }),
         body: JSON.stringify({
           world_id: state.world.id,
           question,
@@ -443,12 +705,14 @@
 
   function renderProfile() {
     const p = state.profile;
+    const u = state.user;
     const w = state.world;
     document.getElementById('profile-details').innerHTML = `
-      <div><strong style="color:var(--text)">Name:</strong> ${escapeHtml(p.name)}</div>
-      <div><strong style="color:var(--text)">Goal:</strong> ${escapeHtml(p.goal)}</div>
-      <div><strong style="color:var(--text)">Interests:</strong> ${p.interests.length ? p.interests.map(escapeHtml).join(', ') : '—'}</div>
-      <div><strong style="color:var(--text)">World day:</strong> ${w.state.time_step}</div>
+      <div><strong style="color:var(--text)">Name:</strong> ${escapeHtml(p ? p.name : (u ? u.first_name + ' ' + u.last_name : '-'))}</div>
+      <div><strong style="color:var(--text)">Email:</strong> ${escapeHtml(u ? u.email : '-')}</div>
+      <div><strong style="color:var(--text)">Goal:</strong> ${escapeHtml(p ? p.goal : '-')}</div>
+      <div><strong style="color:var(--text)">Interests:</strong> ${p && p.interests.length ? p.interests.map(escapeHtml).join(', ') : '—'}</div>
+      <div><strong style="color:var(--text)">World day:</strong> ${w ? w.state.time_step : '-'}</div>
     `;
   }
 
@@ -458,7 +722,14 @@
       .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
       .replace(/"/g, '&quot;').replace(/'/g, '&#039;');
   }
+
+  (function boot() {
+    if (state.token) {
+      routeAfterAuth();
+    } else {
+      showScreen('register');
+    }
+  })();
 </script>
 </body>
 </html>
-
