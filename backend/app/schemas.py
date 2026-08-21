@@ -85,6 +85,7 @@ class DecisionOut(BaseModel):
     choice: str
     consequence: str
     state_delta: dict
+    xp_earned: int = 0
 
     class Config:
         from_attributes = True
@@ -107,3 +108,11 @@ class WhatIfOut(BaseModel):
 
     class Config:
         from_attributes = True
+
+
+class GameProfileOut(BaseModel):
+    level: int
+    xp_total: int
+    xp_into_level: int
+    xp_for_next_level: int
+    progress_pct: int
