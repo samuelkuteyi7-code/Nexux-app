@@ -246,6 +246,7 @@
       <div class="pills">
         <div class="pill amber">🔥 <span id="home-streak">-</span> day streak</div>
         <div class="pill violet">◆ <span id="home-xp">-</span> XP</div>
+        <div class="pill" id="home-level-pill">Level -</div>
         <button class="logout-btn" onclick="logout()">Sign out</button>
       </div>
     </div>
@@ -264,8 +265,9 @@
       <div class="card">
         <h3>Your Progress</h3>
         <div style="display:flex;justify-content:space-between;font-size:12.5px;font-weight:600;margin-bottom:6px;">
-          <span>World state</span><span class="l" style="color:var(--muted)">time step <span id="prog-day">0</span></span>
+          <span id="xp-level-label">Level 1</span><span class="l" style="color:var(--muted)"><span id="xp-into">0</span> / <span id="xp-needed">500</span> XP</span>
         </div>
+        <div class="progress-track"><div class="progress-fill" id="xp-progress-fill" style="width:0%"></div></div>
         <div class="stat-row">
           <div class="stat"><div class="v" id="stat-day">0</div><div class="l">Days</div></div>
           <div class="stat"><div class="v" id="stat-decisions">0</div><div class="l">Decisions</div></div>
@@ -336,6 +338,7 @@
     situation: null,
     decisionCount: 0,
     log: [],
+    game: null, // { level, xp_total, xp_into_level, xp_for_next_level, progress_pct }
   };
 
   const SKILL_COLORS = ['#34D399', '#5B8DEF', '#8B5CF6', '#FBBF24', '#F87171'];
@@ -491,6 +494,7 @@
           state.world = await worldRes.json();
           document.getElementById('bottomnav').style.display = 'flex';
           showScreen('home');
+          await fetchGame();
           renderHome();
           await fetchSituation();
           return;
@@ -544,6 +548,7 @@
 
       document.getElementById('bottomnav').style.display = 'flex';
       showScreen('home');
+      await fetchGame();
       renderHome();
       await fetchSituation();
     } catch (e) {
@@ -561,8 +566,7 @@
     document.getElementById('home-greet').textContent = `${greeting}, ${displayName} 👋`;
     document.getElementById('home-daycount').textContent = `Day ${state.world.state.time_step} in your simulation`;
     document.getElementById('home-goal').textContent = state.world.goal;
-    document.getElementById('home-streak').textContent = '—';
-    document.getElementById('home-xp').textContent = '—';
+    document.getElementById('home-streak').textContent = '—'; // streak isn't built yet
 
     document.getElementById('stat-day').textContent = state.world.state.time_step;
     document.getElementById('stat-decisions').textContent = state.decisionCount;
@@ -570,6 +574,27 @@
 
     renderSkills();
     renderLog();
+    renderGame();
+  }
+
+  async function fetchGame() {
+    try {
+      const res = await fetch(SERVER_URL + '/game/me', { headers: authHeaders() });
+      if (!res.ok) return;
+      state.game = await res.json();
+    } catch (e) {
+      // leave state.game as-is (null on first load) - renderGame handles that gracefully
+    }
+  }
+
+  function renderGame() {
+    const g = state.game;
+    document.getElementById('home-xp').textContent = g ? g.xp_total.toLocaleString() : '—';
+    document.getElementById('home-level-pill').textContent = g ? `Level ${g.level}` : 'Level -';
+    document.getElementById('xp-level-label').textContent = g ? `Level ${g.level}` : 'Level -';
+    document.getElementById('xp-into').textContent = g ? g.xp_into_level : 0;
+    document.getElementById('xp-needed').textContent = g ? g.xp_for_next_level : '-';
+    document.getElementById('xp-progress-fill').style.width = (g ? g.progress_pct : 0) + '%';
   }
 
   function renderSkills() {
@@ -656,11 +681,22 @@
       const worldRes = await fetch(SERVER_URL + '/world/' + state.world.id, { headers: authHeaders() });
       state.world = await worldRes.json();
 
+      await fetchGame();
       renderHome();
+      if (decision.xp_earned) showXpToast(decision.xp_earned);
       await fetchSituation();
     } catch (e) {
       document.querySelectorAll('.option-btn').forEach(b => b.disabled = false);
     }
+  }
+
+  function showXpToast(amount) {
+    const toast = document.createElement('div');
+    toast.textContent = `+${amount} XP`;
+    toast.style.cssText = 'position:fixed;top:16px;left:50%;transform:translateX(-50%);background:var(--grad);color:#fff;font-family:"Space Grotesk",sans-serif;font-weight:700;font-size:13px;padding:8px 16px;border-radius:999px;z-index:50;box-shadow:0 6px 20px rgba(139,92,246,0.4);transition:opacity 0.4s ease;';
+    document.body.appendChild(toast);
+    setTimeout(() => { toast.style.opacity = '0'; }, 1200);
+    setTimeout(() => { toast.remove(); }, 1700);
   }
 
   async function submitWhatIf() {
