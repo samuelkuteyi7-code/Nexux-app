@@ -6,7 +6,7 @@ from fastapi.responses import FileResponse
 from fastapi.staticfiles import StaticFiles
 
 from app.database import Base, engine
-from app.routers import auth, profile, world, simulation, whatif
+from app.routers import auth, profile, world, simulation, whatif, game
 
 Base.metadata.create_all(bind=engine)
 
@@ -28,12 +28,10 @@ app.include_router(profile.router)
 app.include_router(world.router)
 app.include_router(simulation.router)
 app.include_router(whatif.router)
+app.include_router(game.router)
 
 STATIC_DIR = os.path.join(os.path.dirname(__file__), "..", "static")
 
-# Serves logo images (and any other static assets) at /static/<filename>.
-# index.html itself is still served separately at "/" below - this mount
-# is only for supporting assets like the logo.
 app.mount("/static", StaticFiles(directory=STATIC_DIR), name="static")
 
 
