@@ -3,7 +3,8 @@ Core data models for the NEXUS MVP.
 
 Deliberately minimal, matching Master Spec section 19 (MVP scope):
 profile -> one goal -> constrained world -> decisions -> simulation
-state -> a few What If? branches.
+state -> a few What If? branches. No opportunity engine, no social
+layer, no complex economy yet - those are later phases.
 """
 
 from sqlalchemy import Column, Integer, String, JSON, ForeignKey, DateTime, Date
@@ -113,3 +114,26 @@ class WhatIfBranch(Base):
     assumptions = Column(JSON, default=list)            # list[str], stated explicitly per spec section 11
     projected_state = Column(JSON, nullable=False)      # projected outcome, never merged into real state
     created_at = Column(DateTime, default=lambda: datetime.now(timezone.utc))
+
+
+class GameProfile(Base):
+    """
+    Section 15 Game Layer - "Interaction, missions, progression and
+    rewards." Kept as its own table, separate from UserProfile
+    (identity/goal data) and World (simulation state), matching the
+    architecture principle that AI, simulation, and game-layer
+    concerns stay decoupled. Missions/streak fields land here too as
+    they're built.
+
+    Only `xp` is stored - level and progress-into-level are always
+    derived from it (see app/game/leveling.py) so they can never
+    drift out of sync.
+    """
+    __tablename__ = "game_profiles"
+
+    id = Column(Integer, primary_key=True, index=True)
+    profile_id = Column(Integer, ForeignKey("user_profiles.id"), unique=True, nullable=False)
+    xp = Column(Integer, default=0, nullable=False)
+    created_at = Column(DateTime, default=lambda: datetime.now(timezone.utc))
+
+    profile = relationship("UserProfile")
