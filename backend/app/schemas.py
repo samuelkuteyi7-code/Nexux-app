@@ -117,3 +117,18 @@ class GameProfileOut(BaseModel):
     xp_for_next_level: int
     progress_pct: int
     streak_count: int
+class MissionOut(BaseModel):
+    key: str
+    title: str
+    description: str
+    reward_xp: int
+    current: int
+    target: int
+    progress_pct: int
+    completed: bool
+    claimed: bool
+
+
+class MissionClaimResult(BaseModel):
+    mission: MissionOut
+    game: GameProfileOut
