@@ -116,3 +116,4 @@ class GameProfileOut(BaseModel):
     xp_into_level: int
     xp_for_next_level: int
     progress_pct: int
+    streak_count: int
