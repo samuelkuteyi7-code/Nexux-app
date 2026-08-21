@@ -141,3 +141,17 @@ class GameProfile(Base):
     streak_count = Column(Integer, default=0, nullable=False)
     last_checkin_date = Column(Date, nullable=True)
     created_at = Column(DateTime, default=lambda: datetime.now(timezone.utc))
+class MissionClaim(Base):
+    """
+    Records that a user has claimed a completed mission's XP reward.
+    Mission *definitions* live in code (app/game/missions.py) since
+    the MVP has no need for an admin-editable mission list - this
+    table only stores the one fact that can't be derived from
+    anything else: has this specific mission already been claimed.
+    """
+    __tablename__ = "mission_claims"
+
+    id = Column(Integer, primary_key=True, index=True)
+    profile_id = Column(Integer, ForeignKey("user_profiles.id"), nullable=False)
+    mission_key = Column(String, nullable=False)
+    claimed_at = Column(DateTime, default=lambda: datetime.now(timezone.utc))
