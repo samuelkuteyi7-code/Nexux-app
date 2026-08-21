@@ -122,18 +122,22 @@ class GameProfile(Base):
     rewards." Kept as its own table, separate from UserProfile
     (identity/goal data) and World (simulation state), matching the
     architecture principle that AI, simulation, and game-layer
-    concerns stay decoupled. Missions/streak fields land here too as
-    they're built.
+    concerns stay decoupled. Missions land here too as they're built.
 
     Only `xp` is stored - level and progress-into-level are always
     derived from it (see app/game/leveling.py) so they can never
     drift out of sync.
+
+    streak_count / last_checkin_date track daily check-ins (see
+    app/game/streak.py). Dates are UTC calendar days - a streak can
+    tick over at a slightly different local time than the user's own
+    midnight, which is an accepted simplification for the MVP.
     """
     __tablename__ = "game_profiles"
 
     id = Column(Integer, primary_key=True, index=True)
     profile_id = Column(Integer, ForeignKey("user_profiles.id"), unique=True, nullable=False)
     xp = Column(Integer, default=0, nullable=False)
+    streak_count = Column(Integer, default=0, nullable=False)
+    last_checkin_date = Column(Date, nullable=True)
     created_at = Column(DateTime, default=lambda: datetime.now(timezone.utc))
-
-    profile = relationship("UserProfile")
