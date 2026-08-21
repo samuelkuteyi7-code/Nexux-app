@@ -33,7 +33,8 @@
   .auth-top a { font-size:12.5px; color:var(--muted); text-decoration:none; }
   .auth-top a b { color:#fff; }
   .auth-logo { display:flex; flex-direction:column; align-items:center; margin-bottom:22px; }
-  .auth-logo .mark { width:56px; height:56px; border-radius:16px; background:var(--grad); display:flex; align-items:center; justify-content:center; font-size:26px; margin-bottom:12px; box-shadow:0 8px 30px rgba(139,92,246,0.35); }
+  .auth-logo .mark { width:64px; height:64px; margin-bottom:12px; display:flex; align-items:center; justify-content:center; }
+  .auth-logo .mark img { width:100%; height:100%; object-fit:contain; filter:drop-shadow(0 8px 20px rgba(139,92,246,0.4)); }
   .auth-logo h1 { font-family:'Space Grotesk',sans-serif; font-size:22px; margin:0; text-align:center; }
   .auth-logo h1 span { background:var(--grad); -webkit-background-clip:text; background-clip:text; color:transparent; }
   .auth-logo p { font-size:12.5px; color:var(--muted); margin:6px 0 0; text-align:center; }
@@ -47,7 +48,7 @@
   .field input::placeholder { color:var(--muted2); }
   .pw-field { position:relative; }
   .pw-field input { padding-right:40px; }
-  .pw-toggle { position:absolute; right:12px; top:38px; background:none; border:none; color:var(--muted); font-size:15px; cursor:pointer; padding:2px; }
+  .pw-toggle { position:absolute; right:12px; top:36px; background:none; border:1px solid var(--border-strong); border-radius:6px; padding:4px 9px; color:var(--muted); font-size:10.5px; font-weight:600; text-transform:uppercase; letter-spacing:0.3px; cursor:pointer; }
 
   .terms-row { display:flex; align-items:flex-start; gap:8px; margin:14px 0 6px; }
   .terms-row input { margin-top:2px; }
@@ -69,7 +70,8 @@
 
   /* ---- onboarding (goal setup, after account exists) ---- */
   #onboardScreen { padding:44px 22px; background:var(--elevated); min-height:100vh; }
-  #onboardScreen .cap-big { width:52px; height:52px; border-radius:14px; background:var(--grad); display:flex; align-items:center; justify-content:center; font-size:22px; margin-bottom:16px; }
+  #onboardScreen .cap-big { width:56px; height:56px; margin-bottom:16px; display:flex; align-items:center; justify-content:center; }
+  #onboardScreen .cap-big img { width:100%; height:100%; object-fit:contain; }
   #onboardScreen h1 { font-family:'Space Grotesk',sans-serif; font-size:24px; margin:0 0 4px 0; }
   #onboardScreen .sub { font-size:13px; color:var(--muted); margin-bottom:26px; }
   #onboardScreen label { font-size:11.5px; color:var(--muted); font-weight:600; text-transform:uppercase; letter-spacing:0.4px; display:block; margin:14px 0 6px; }
@@ -81,7 +83,8 @@
   /* ---- topbar ---- */
   .topbar { background:var(--elevated); padding:18px 18px 22px; border-radius:0 0 20px 20px; border-bottom:1px solid var(--border); }
   .topbar .brand { display:flex; align-items:center; gap:9px; margin-bottom:16px; }
-  .brand .cap { width:30px; height:30px; border-radius:8px; background:var(--grad); display:flex; align-items:center; justify-content:center; font-size:15px; }
+  .brand .cap { width:30px; height:30px; display:flex; align-items:center; justify-content:center; }
+  .brand .cap img { width:100%; height:100%; object-fit:contain; }
   .brand .name { font-family:'Space Grotesk',sans-serif; font-weight:800; font-size:16px; }
   .topbar .greet { font-family:'Space Grotesk',sans-serif; font-weight:700; font-size:19px; margin-bottom:3px; }
   .topbar .sub { font-size:12.5px; color:var(--muted); }
@@ -160,7 +163,7 @@
     <div class="auth-shell">
       <div class="auth-top"><a href="#" onclick="showScreen('login');return false;">Already have an account? <b>Sign In</b></a></div>
       <div class="auth-logo">
-        <div class="mark">◆</div>
+        <div class="mark"><img src="/static/logo-icon-128.png" alt="NEXUS"></div>
         <h1>Welcome to <span>NEXUS</span></h1>
         <p>Create your account and start building your future.</p>
       </div>
@@ -174,12 +177,12 @@
         <div class="field pw-field">
           <label>Password</label>
           <input type="password" id="reg-password" placeholder="At least 8 characters">
-          <button type="button" class="pw-toggle" onclick="togglePw('reg-password', this)">👁</button>
+          <button type="button" class="pw-toggle" onclick="togglePw('reg-password', this)">Show</button>
         </div>
         <div class="field pw-field">
           <label>Confirm Password</label>
           <input type="password" id="reg-confirm-password" placeholder="Repeat password">
-          <button type="button" class="pw-toggle" onclick="togglePw('reg-confirm-password', this)">👁</button>
+          <button type="button" class="pw-toggle" onclick="togglePw('reg-confirm-password', this)">Show</button>
         </div>
         <div class="field"><label>Date of Birth</label><input type="date" id="reg-dob"></div>
         <div class="terms-row">
@@ -204,7 +207,7 @@
     <div class="auth-shell">
       <div class="auth-top"><a href="#" onclick="showScreen('register');return false;">New here? <b>Create Account</b></a></div>
       <div class="auth-logo">
-        <div class="mark">◆</div>
+        <div class="mark"><img src="/static/logo-icon-128.png" alt="NEXUS"></div>
         <h1>Welcome back to <span>NEXUS</span></h1>
         <p>Sign in to continue your simulation.</p>
       </div>
@@ -214,7 +217,7 @@
         <div class="field pw-field">
           <label>Password</label>
           <input type="password" id="login-password" placeholder="Your password">
-          <button type="button" class="pw-toggle" onclick="togglePw('login-password', this)">👁</button>
+          <button type="button" class="pw-toggle" onclick="togglePw('login-password', this)">Show</button>
         </div>
         <button class="auth-submit" id="login-submit-btn" onclick="submitLogin()">Sign In</button>
       </div>
@@ -223,7 +226,7 @@
 
   <!-- ============ GOAL SETUP (after account creation) ============ -->
   <div class="screen" id="onboardScreen">
-    <div class="cap-big">◆</div>
+    <div class="cap-big"><img src="/static/logo-icon-128.png" alt="NEXUS"></div>
     <h1>Set your goal</h1>
     <div class="sub">This shapes the world NEXUS builds for you.</div>
     <div class="err" id="onboardErr"></div>
@@ -237,7 +240,7 @@
   <!-- ============ HOME ============ -->
   <div class="screen" id="screen-home">
     <div class="topbar">
-      <div class="brand"><div class="cap">◆</div><div class="name">NEXUS</div></div>
+      <div class="brand"><div class="cap"><img src="/static/logo-icon-64.png" alt="NEXUS"></div><div class="name">NEXUS</div></div>
       <div class="greet" id="home-greet">Good evening 👋</div>
       <div class="sub" id="home-daycount">Day 0 in your simulation</div>
       <div class="pills">
@@ -347,7 +350,7 @@
   function togglePw(inputId, btn) {
     const input = document.getElementById(inputId);
     input.type = input.type === 'password' ? 'text' : 'password';
-    btn.textContent = input.type === 'password' ? '👁' : '🙈';
+    btn.textContent = input.type === 'password' ? 'Show' : 'Hide';
   }
 
   function showScreen(name) {
