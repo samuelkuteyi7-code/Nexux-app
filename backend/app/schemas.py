@@ -132,3 +132,18 @@ class MissionOut(BaseModel):
 class MissionClaimResult(BaseModel):
     mission: MissionOut
     game: GameProfileOut
+class DailyChallengeOut(BaseModel):
+    key: str
+    title: str
+    description: str
+    reward_xp: int
+    current: int
+    target: int
+    progress_pct: int
+    completed: bool
+    claimed: bool
+
+
+class DailyChallengeClaimResult(BaseModel):
+    challenge: DailyChallengeOut
+    game: GameProfileOut
