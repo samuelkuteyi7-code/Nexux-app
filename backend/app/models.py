@@ -169,3 +169,18 @@ class DailyChallengeClaim(Base):
     challenge_date = Column(Date, nullable=False)
     challenge_key = Column(String, nullable=False)
     claimed_at = Column(DateTime, default=lambda: datetime.now(timezone.utc))
+class ChatMessage(Base):
+    """
+    NEXUS AI chat history - Section 6, the general conversational
+    assistant, separate from the situation-card flow. Persisted per
+    profile so the conversation survives across sessions/devices
+    (once a real "get my world" lookup exists - see the known
+    limitation noted earlier about world lookup being local-only).
+    """
+    __tablename__ = "chat_messages"
+
+    id = Column(Integer, primary_key=True, index=True)
+    profile_id = Column(Integer, ForeignKey("user_profiles.id"), nullable=False)
+    role = Column(String, nullable=False)  # "user" or "assistant"
+    content = Column(String, nullable=False)
+    created_at = Column(DateTime, default=lambda: datetime.now(timezone.utc))
