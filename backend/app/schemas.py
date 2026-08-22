@@ -147,3 +147,19 @@ class DailyChallengeOut(BaseModel):
 class DailyChallengeClaimResult(BaseModel):
     challenge: DailyChallengeOut
     game: GameProfileOut
+class ChatMessageOut(BaseModel):
+    id: int
+    role: str
+    content: str
+
+    class Config:
+        from_attributes = True
+
+
+class ChatSendRequest(BaseModel):
+    message: str
+
+
+class ChatSendResponse(BaseModel):
+    user_message: ChatMessageOut
+    assistant_message: ChatMessageOut
