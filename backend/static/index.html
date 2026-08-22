@@ -139,6 +139,27 @@
   .log-item { font-size:12.5px; color:var(--muted); padding:8px 0; border-bottom:1px solid var(--border); }
   .log-item:last-child { border-bottom:none; }
 
+  .mission-row { padding:10px 0; border-bottom:1px solid var(--border); }
+  .mission-row:last-child { border-bottom:none; }
+  .mission-top { display:flex; justify-content:space-between; align-items:center; margin-bottom:6px; }
+  .mission-title { font-size:12.5px; font-weight:700; }
+  .mission-desc { font-size:11px; color:var(--muted); margin-bottom:6px; }
+  .mission-bar { height:6px; border-radius:999px; background:var(--elevated); overflow:hidden; margin-bottom:6px; }
+  .mission-bar-fill { height:100%; border-radius:999px; background:var(--grad); }
+  .mission-bottom { display:flex; justify-content:space-between; align-items:center; }
+  .mission-progress-text { font-size:10.5px; color:var(--muted); }
+  .mission-reward { font-size:10.5px; color:var(--violet); font-weight:700; }
+  .mission-claim-btn { background:var(--grad); color:#fff; border:none; border-radius:8px; padding:5px 11px; font-size:11px; font-weight:700; cursor:pointer; }
+  .mission-claim-btn:disabled { opacity:0.5; cursor:not-allowed; }
+  .mission-done-tag { font-size:10.5px; color:var(--green); font-weight:700; }
+
+  .zones-grid { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+  .zone-card { background:var(--elevated); border:1px solid var(--border); border-radius:12px; padding:12px; }
+  .zone-card .zone-name { font-size:12px; font-weight:700; text-transform:capitalize; margin-bottom:6px; }
+  .zone-card .zone-bar { height:6px; border-radius:999px; background:var(--surface-2); overflow:hidden; margin-bottom:5px; }
+  .zone-card .zone-bar-fill { height:100%; border-radius:999px; background:var(--grad); }
+  .zone-card .zone-val { font-size:11px; color:var(--muted); }
+
   /* ---- what if ---- */
   #whatifScreen textarea, #whatifScreen input { width:100%; border:1px solid var(--border-strong); border-radius:10px; padding:12px; font-size:13.5px; font-family:'Inter',sans-serif; background:var(--elevated); color:var(--text); margin-bottom:10px; }
   #whatifScreen textarea { min-height:60px; resize:vertical; }
@@ -281,8 +302,62 @@
       </div>
 
       <div class="card">
+        <h3>🎯 Missions</h3>
+        <div id="missions-list"><div class="empty-note">Loading missions…</div></div>
+      </div>
+
+      <div class="card" id="daily-challenge-card">
+        <h3>⚡ Daily Challenge</h3>
+        <div id="daily-challenge-content"><div class="empty-note">Loading today's challenge…</div></div>
+      </div>
+
+      <div class="card">
         <h3>Recent History</h3>
         <div id="log-list"><div class="empty-note">No decisions yet — your choices will show up here.</div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ WORLD MAP / OVERVIEW ============ -->
+  <div class="screen" id="worldmapScreen">
+    <div class="sub-header"><span class="back" onclick="showScreen('home')">←</span><h2>Your World</h2></div>
+    <div class="content">
+      <div class="card" style="text-align:center;">
+        <svg width="120" height="120" viewBox="0 0 120 120" style="margin:4px auto 8px;display:block;">
+          <circle cx="60" cy="60" r="52" fill="none" stroke="var(--elevated)" stroke-width="10" />
+          <circle id="wm-donut" cx="60" cy="60" r="52" fill="none" stroke="url(#wm-grad)" stroke-width="10"
+            stroke-linecap="round" stroke-dasharray="326.7" stroke-dashoffset="326.7"
+            transform="rotate(-90 60 60)" />
+          <defs>
+            <linearGradient id="wm-grad" x1="0" y1="0" x2="1" y2="1">
+              <stop offset="0%" stop-color="#8B5CF6" />
+              <stop offset="100%" stop-color="#5B8DEF" />
+            </linearGradient>
+          </defs>
+          <text id="wm-donut-text" x="60" y="67" text-anchor="middle" font-size="22" font-weight="700" fill="#F2F3FA">0%</text>
+        </svg>
+        <div style="font-size:12.5px;color:var(--muted);">World Progress</div>
+        <div style="font-size:11px;color:var(--muted2);margin-top:4px;">Based on level progress and missions completed</div>
+      </div>
+
+      <div class="card">
+        <h3>Your Goal</h3>
+        <div id="wm-goal" style="font-size:13.5px;font-weight:600;margin-bottom:4px;">-</div>
+        <div id="wm-day" style="font-size:11.5px;color:var(--muted);">-</div>
+      </div>
+
+      <div class="card">
+        <h3>Zones You're Building</h3>
+        <div id="wm-zones"><div class="empty-note">No skills developed yet — zones appear as you grow.</div></div>
+      </div>
+
+      <div class="card">
+        <h3>Progress Summary</h3>
+        <div class="stat-row" style="margin-top:0;padding-top:0;border-top:none;">
+          <div class="stat"><div class="v" id="wm-level">-</div><div class="l">Level</div></div>
+          <div class="stat"><div class="v" id="wm-missions">-</div><div class="l">Missions</div></div>
+          <div class="stat"><div class="v" id="wm-streak">-</div><div class="l">Streak</div></div>
+        </div>
       </div>
     </div>
   </div>
@@ -320,6 +395,7 @@
   <!-- ============ BOTTOM NAV ============ -->
   <div class="bottomnav" id="bottomnav" style="display:none;">
     <div class="navitem active" data-screen="home" onclick="showScreen('home')"><span class="navicon">🏠</span>Home</div>
+    <div class="navitem" data-screen="worldmap" onclick="showScreen('worldmap')"><span class="navicon">🌐</span>World</div>
     <div class="navitem" data-screen="whatif" onclick="showScreen('whatif')"><span class="navicon">🔀</span>What If?</div>
     <div class="navitem" data-screen="profile" onclick="showScreen('profile')"><span class="navicon">👤</span>Profile</div>
   </div>
@@ -338,7 +414,9 @@
     situation: null,
     decisionCount: 0,
     log: [],
-    game: null, // { level, xp_total, xp_into_level, xp_for_next_level, progress_pct }
+    game: null, // { level, xp_total, xp_into_level, xp_for_next_level, progress_pct, streak_count }
+    missions: [],
+    dailyChallenge: null,
   };
 
   const SKILL_COLORS = ['#34D399', '#5B8DEF', '#8B5CF6', '#FBBF24', '#F87171'];
@@ -368,6 +446,10 @@
     } else if (name === 'home') {
       document.getElementById('screen-home').classList.add('active');
       document.querySelector('.navitem[data-screen="home"]').classList.add('active');
+    } else if (name === 'worldmap') {
+      document.getElementById('worldmapScreen').classList.add('active');
+      document.querySelector('.navitem[data-screen="worldmap"]').classList.add('active');
+      renderWorldMap();
     } else if (name === 'whatif') {
       document.getElementById('whatifScreen').classList.add('active');
       document.querySelector('.navitem[data-screen="whatif"]').classList.add('active');
@@ -494,7 +576,7 @@
           state.world = await worldRes.json();
           document.getElementById('bottomnav').style.display = 'flex';
           showScreen('home');
-          await fetchGame();
+          await checkinGame();
           renderHome();
           await fetchSituation();
           return;
@@ -548,7 +630,7 @@
 
       document.getElementById('bottomnav').style.display = 'flex';
       showScreen('home');
-      await fetchGame();
+      await checkinGame();
       renderHome();
       await fetchSituation();
     } catch (e) {
@@ -566,7 +648,6 @@
     document.getElementById('home-greet').textContent = `${greeting}, ${displayName} 👋`;
     document.getElementById('home-daycount').textContent = `Day ${state.world.state.time_step} in your simulation`;
     document.getElementById('home-goal').textContent = state.world.goal;
-    document.getElementById('home-streak').textContent = '—'; // streak isn't built yet
 
     document.getElementById('stat-day').textContent = state.world.state.time_step;
     document.getElementById('stat-decisions').textContent = state.decisionCount;
@@ -575,15 +656,30 @@
     renderSkills();
     renderLog();
     renderGame();
+    fetchMissions();
+    fetchDailyChallenge();
   }
 
   async function fetchGame() {
+    // Read-only refresh (after a decision, etc.) - does not affect the streak.
     try {
       const res = await fetch(SERVER_URL + '/game/me', { headers: authHeaders() });
       if (!res.ok) return;
       state.game = await res.json();
     } catch (e) {
-      // leave state.game as-is (null on first load) - renderGame handles that gracefully
+      // leave state.game as-is - renderGame handles null gracefully
+    }
+  }
+
+  async function checkinGame() {
+    // Call once per app-open. Idempotent for the same UTC day, so it's
+    // safe even if the user refreshes or re-enters multiple times today.
+    try {
+      const res = await fetch(SERVER_URL + '/game/checkin', { method: 'POST', headers: authHeaders() });
+      if (!res.ok) return;
+      state.game = await res.json();
+    } catch (e) {
+      // leave state.game as-is
     }
   }
 
@@ -595,6 +691,156 @@
     document.getElementById('xp-into').textContent = g ? g.xp_into_level : 0;
     document.getElementById('xp-needed').textContent = g ? g.xp_for_next_level : '-';
     document.getElementById('xp-progress-fill').style.width = (g ? g.progress_pct : 0) + '%';
+    document.getElementById('home-streak').textContent = g ? g.streak_count : '—';
+  }
+
+  async function fetchMissions() {
+    const container = document.getElementById('missions-list');
+    try {
+      const res = await fetch(SERVER_URL + '/missions/', { headers: authHeaders() });
+      if (!res.ok) throw new Error();
+      state.missions = await res.json();
+      renderMissions();
+    } catch (e) {
+      container.innerHTML = '<div class="empty-note">Could not load missions.</div>';
+    }
+  }
+
+  function renderMissions() {
+    const container = document.getElementById('missions-list');
+    const missions = state.missions || [];
+    if (missions.length === 0) {
+      container.innerHTML = '<div class="empty-note">No missions available.</div>';
+      return;
+    }
+    container.innerHTML = missions.map(m => `
+      <div class="mission-row">
+        <div class="mission-top">
+          <span class="mission-title">${escapeHtml(m.title)}</span>
+          ${m.claimed
+            ? '<span class="mission-done-tag">✓ Claimed</span>'
+            : m.completed
+              ? `<button class="mission-claim-btn" onclick="claimMission('${m.key}')">Claim +${m.reward_xp} XP</button>`
+              : `<span class="mission-reward">+${m.reward_xp} XP</span>`
+          }
+        </div>
+        <div class="mission-desc">${escapeHtml(m.description)}</div>
+        <div class="mission-bar"><div class="mission-bar-fill" style="width:${m.progress_pct}%"></div></div>
+        <div class="mission-bottom">
+          <span class="mission-progress-text">${m.current} / ${m.target}</span>
+        </div>
+      </div>
+    `).join('');
+  }
+
+  async function claimMission(key) {
+    try {
+      const res = await fetch(SERVER_URL + '/missions/' + key + '/claim', {
+        method: 'POST',
+        headers: authHeaders(),
+      });
+      if (!res.ok) return;
+      const result = await res.json();
+      state.game = result.game;
+      renderGame();
+      showXpToast(result.mission.reward_xp);
+      await fetchMissions();
+    } catch (e) {
+      // silently ignore - mission list will just stay as-is
+    }
+  }
+
+  async function fetchDailyChallenge() {
+    const container = document.getElementById('daily-challenge-content');
+    try {
+      const res = await fetch(SERVER_URL + '/daily-challenge/', { headers: authHeaders() });
+      if (!res.ok) throw new Error();
+      state.dailyChallenge = await res.json();
+      renderDailyChallenge();
+    } catch (e) {
+      container.innerHTML = '<div class="empty-note">Could not load today&#39;s challenge.</div>';
+    }
+  }
+
+  function renderDailyChallenge() {
+    const container = document.getElementById('daily-challenge-content');
+    const c = state.dailyChallenge;
+    if (!c) {
+      container.innerHTML = '<div class="empty-note">Could not load today&#39;s challenge.</div>';
+      return;
+    }
+    container.innerHTML = `
+      <div class="mission-row" style="padding-top:0;">
+        <div class="mission-top">
+          <span class="mission-title">${escapeHtml(c.title)}</span>
+          ${c.claimed
+            ? '<span class="mission-done-tag">✓ Claimed</span>'
+            : c.completed
+              ? `<button class="mission-claim-btn" onclick="claimDailyChallenge()">Claim +${c.reward_xp} XP</button>`
+              : `<span class="mission-reward">+${c.reward_xp} XP</span>`
+          }
+        </div>
+        <div class="mission-desc">${escapeHtml(c.description)}</div>
+        <div class="mission-bar"><div class="mission-bar-fill" style="width:${c.progress_pct}%"></div></div>
+        <div class="mission-bottom"><span class="mission-progress-text">${c.current} / ${c.target}</span></div>
+      </div>
+    `;
+  }
+
+  async function claimDailyChallenge() {
+    try {
+      const res = await fetch(SERVER_URL + '/daily-challenge/claim', { method: 'POST', headers: authHeaders() });
+      if (!res.ok) return;
+      const result = await res.json();
+      state.game = result.game;
+      renderGame();
+      showXpToast(result.challenge.reward_xp);
+      await fetchDailyChallenge();
+    } catch (e) {
+      // silently ignore
+    }
+  }
+
+  function renderWorldMap() {
+    const w = state.world;
+    const g = state.game;
+    const missions = state.missions || [];
+
+    if (!w) return;
+
+    document.getElementById('wm-goal').textContent = w.goal;
+    document.getElementById('wm-day').textContent = `Day ${w.state.time_step} in your simulation`;
+
+    const missionsCompleted = missions.filter(m => m.claimed).length;
+    const missionsTotal = missions.length;
+    const missionRatio = missionsTotal ? (missionsCompleted / missionsTotal) * 100 : 0;
+    const levelProgress = g ? g.progress_pct : 0;
+    const worldProgressPct = Math.round((levelProgress + missionRatio) / 2);
+
+    const circumference = 2 * Math.PI * 52;
+    const offset = circumference - (worldProgressPct / 100) * circumference;
+    document.getElementById('wm-donut').setAttribute('stroke-dasharray', circumference);
+    document.getElementById('wm-donut').setAttribute('stroke-dashoffset', offset);
+    document.getElementById('wm-donut-text').textContent = worldProgressPct + '%';
+
+    document.getElementById('wm-level').textContent = g ? g.level : '-';
+    document.getElementById('wm-missions').textContent = `${missionsCompleted}/${missionsTotal}`;
+    document.getElementById('wm-streak').textContent = g ? g.streak_count : '-';
+
+    const skills = w.state.skills || {};
+    const entries = Object.entries(skills).sort((a, b) => b[1] - a[1]);
+    const zonesContainer = document.getElementById('wm-zones');
+    if (entries.length === 0) {
+      zonesContainer.innerHTML = '<div class="empty-note">No skills developed yet — zones appear as you grow.</div>';
+      return;
+    }
+    zonesContainer.innerHTML = `<div class="zones-grid">` + entries.slice(0, 4).map(([name, val]) => `
+      <div class="zone-card">
+        <div class="zone-name">${escapeHtml(name)}</div>
+        <div class="zone-bar"><div class="zone-bar-fill" style="width:${Math.min(100, val)}%"></div></div>
+        <div class="zone-val">${val} / 100</div>
+      </div>
+    `).join('') + `</div>`;
   }
 
   function renderSkills() {
