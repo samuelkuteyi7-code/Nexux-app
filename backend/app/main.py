@@ -6,7 +6,7 @@ from fastapi.responses import FileResponse
 from fastapi.staticfiles import StaticFiles
 
 from app.database import Base, engine
-from app.routers import auth, profile, world, simulation, whatif, game, missions
+from app.routers import auth, profile, world, simulation, whatif, game, missions, daily_challenge
 
 Base.metadata.create_all(bind=engine)
 
@@ -30,6 +30,7 @@ app.include_router(simulation.router)
 app.include_router(whatif.router)
 app.include_router(game.router)
 app.include_router(missions.router)
+app.include_router(daily_challenge.router)
 
 STATIC_DIR = os.path.join(os.path.dirname(__file__), "..", "static")
 
