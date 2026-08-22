@@ -163,3 +163,18 @@ class ChatSendRequest(BaseModel):
 class ChatSendResponse(BaseModel):
     user_message: ChatMessageOut
     assistant_message: ChatMessageOut
+class OnboardingChatMessage(BaseModel):
+    role: str
+    content: str
+
+
+class OnboardingChatRequest(BaseModel):
+    history: list[OnboardingChatMessage] = []
+    message: str
+
+
+class OnboardingChatResponse(BaseModel):
+    reply: str
+    ready_to_build: bool
+    user_world_model: dict | None = None
+    ai_available: bool
