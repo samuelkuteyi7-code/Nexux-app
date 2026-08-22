@@ -155,3 +155,17 @@ class MissionClaim(Base):
     profile_id = Column(Integer, ForeignKey("user_profiles.id"), nullable=False)
     mission_key = Column(String, nullable=False)
     claimed_at = Column(DateTime, default=lambda: datetime.now(timezone.utc))
+class DailyChallengeClaim(Base):
+    """
+    Records that a user has claimed today's daily challenge reward.
+    One row per (profile_id, challenge_date) - enforced by the router
+    checking before inserting, since the challenge itself rotates by
+    date (see app/game/daily_challenge.py) rather than being stored.
+    """
+    __tablename__ = "daily_challenge_claims"
+
+    id = Column(Integer, primary_key=True, index=True)
+    profile_id = Column(Integer, ForeignKey("user_profiles.id"), nullable=False)
+    challenge_date = Column(Date, nullable=False)
+    challenge_key = Column(String, nullable=False)
+    claimed_at = Column(DateTime, default=lambda: datetime.now(timezone.utc))
