@@ -174,6 +174,28 @@
   .sub-header { display:flex; align-items:center; gap:10px; padding:16px 16px 12px; background:var(--elevated); border-bottom:1px solid var(--border); }
   .sub-header .back { font-size:19px; cursor:pointer; color:var(--muted); }
   .sub-header h2 { font-family:'Space Grotesk',sans-serif; font-size:16px; margin:0; }
+
+  /* ---- chat ---- */
+  .chat-body { padding:16px; padding-bottom:90px; min-height:calc(100vh - 140px); display:flex; flex-direction:column; gap:10px; }
+  .chat-bubble { max-width:80%; padding:10px 13px; border-radius:14px; font-size:13px; line-height:1.5; white-space:pre-wrap; }
+  .chat-bubble.user { align-self:flex-end; background:var(--grad); color:#fff; border-bottom-right-radius:4px; }
+  .chat-bubble.assistant { align-self:flex-start; background:var(--surface); border:1px solid var(--border); border-bottom-left-radius:4px; }
+  .chat-input-row { position:fixed; bottom:0; left:50%; transform:translateX(-50%); width:100%; max-width:420px; background:var(--elevated); border-top:1px solid var(--border); padding:10px 12px; display:flex; gap:8px; z-index:15; }
+  .chat-input-row input { flex:1; padding:11px 13px; border-radius:999px; border:1px solid var(--border-strong); background:rgba(255,255,255,0.05); color:#fff; font-size:13.5px; }
+  .chat-input-row button { background:var(--grad); color:#fff; border:none; border-radius:999px; padding:0 18px; font-weight:700; font-size:13px; cursor:pointer; }
+  .chat-input-row button:disabled { opacity:0.5; cursor:not-allowed; }
+
+  /* ---- conversational onboarding ---- */
+  #convoOnboardScreen { background:var(--elevated); min-height:100vh; }
+  .convo-top { padding:32px 20px 14px; text-align:center; border-bottom:1px solid var(--border); }
+  .convo-skip { display:inline-block; margin-top:10px; font-size:11.5px; color:var(--blue); text-decoration:none; }
+  #convo-messages { padding:16px; }
+  .convo-summary-card { margin:0 16px 16px; background:var(--surface); border:1px solid var(--border); border-radius:16px; padding:16px; }
+  .convo-summary-card h4 { font-family:'Space Grotesk',sans-serif; font-size:13px; margin:0 0 10px; }
+  .convo-check-item { display:flex; gap:8px; align-items:flex-start; font-size:12.5px; color:var(--text); margin-bottom:8px; line-height:1.4; }
+  .convo-check-item .tick { color:var(--green); flex-shrink:0; }
+  .convo-build-btn { width:100%; padding:13px; border:none; border-radius:12px; background:var(--grad); color:#fff; font-family:'Space Grotesk',sans-serif; font-weight:700; font-size:13.5px; margin-top:8px; cursor:pointer; }
+  .convo-build-btn:disabled { opacity:0.6; }
 </style>
 </head>
 <body>
@@ -256,6 +278,22 @@
     <label>Interests (comma separated)</label>
     <input type="text" id="ob-interests" placeholder="coding, design, business">
     <button class="primary" onclick="submitOnboarding()" id="ob-submit-btn">Enter your world</button>
+  </div>
+
+  <!-- ============ CONVERSATIONAL ONBOARDING ============ -->
+  <div class="screen" id="convoOnboardScreen">
+    <div class="convo-top">
+      <div class="cap-big" style="width:44px;height:44px;margin:0 0 8px;"><img src="/static/logo-icon-128.png" alt="NEXUS"></div>
+      <h1 style="font-size:19px;margin:0;">Let's get to know you 👋</h1>
+      <p style="font-size:12px;color:var(--muted);margin:4px 0 0;">Talk to NEXUS like a friend. Share your goals, interests, and what you're figuring out.</p>
+      <a href="#" class="convo-skip" onclick="showScreen('onboard');return false;">Prefer a quick form instead? →</a>
+    </div>
+    <div class="chat-body" id="convo-messages" style="padding-bottom:170px;"></div>
+    <div id="convo-summary" style="display:none;"></div>
+    <div class="chat-input-row" id="convo-input-row">
+      <input type="text" id="convo-input" placeholder="Type your message…" onkeydown="if(event.key==='Enter') sendOnboardingMessage();">
+      <button onclick="sendOnboardingMessage()" id="convo-send-btn">Send</button>
+    </div>
   </div>
 
   <!-- ============ HOME ============ -->
@@ -362,6 +400,18 @@
     </div>
   </div>
 
+  <!-- ============ NEXUS AI CHAT ============ -->
+  <div class="screen" id="chatScreen">
+    <div class="sub-header"><span class="back" onclick="showScreen('home')">←</span><h2>NEXUS AI</h2></div>
+    <div class="chat-body" id="chat-messages">
+      <div class="empty-note">Loading conversation…</div>
+    </div>
+    <div class="chat-input-row">
+      <input type="text" id="chat-input" placeholder="Ask NEXUS anything…" onkeydown="if(event.key==='Enter') sendChatMessage();">
+      <button onclick="sendChatMessage()" id="chat-send-btn">Send</button>
+    </div>
+  </div>
+
   <!-- ============ WHAT IF ============ -->
   <div class="screen" id="whatifScreen">
     <div class="sub-header"><span class="back" onclick="showScreen('home')">←</span><h2>What If?</h2></div>
@@ -397,6 +447,7 @@
     <div class="navitem active" data-screen="home" onclick="showScreen('home')"><span class="navicon">🏠</span>Home</div>
     <div class="navitem" data-screen="worldmap" onclick="showScreen('worldmap')"><span class="navicon">🌐</span>World</div>
     <div class="navitem" data-screen="whatif" onclick="showScreen('whatif')"><span class="navicon">🔀</span>What If?</div>
+    <div class="navitem" data-screen="chat" onclick="showScreen('chat')"><span class="navicon">💬</span>NEXUS AI</div>
     <div class="navitem" data-screen="profile" onclick="showScreen('profile')"><span class="navicon">👤</span>Profile</div>
   </div>
 
@@ -417,6 +468,9 @@
     game: null, // { level, xp_total, xp_into_level, xp_for_next_level, progress_pct, streak_count }
     missions: [],
     dailyChallenge: null,
+    chatMessages: [],
+    onboardingHistory: [],
+    onboardingModel: null,
   };
 
   const SKILL_COLORS = ['#34D399', '#5B8DEF', '#8B5CF6', '#FBBF24', '#F87171'];
@@ -443,6 +497,9 @@
       document.getElementById('loginScreen').classList.add('active');
     } else if (name === 'onboard') {
       document.getElementById('onboardScreen').classList.add('active');
+    } else if (name === 'convoOnboard') {
+      document.getElementById('convoOnboardScreen').classList.add('active');
+      renderConvoOnboard();
     } else if (name === 'home') {
       document.getElementById('screen-home').classList.add('active');
       document.querySelector('.navitem[data-screen="home"]').classList.add('active');
@@ -453,6 +510,10 @@
     } else if (name === 'whatif') {
       document.getElementById('whatifScreen').classList.add('active');
       document.querySelector('.navitem[data-screen="whatif"]').classList.add('active');
+    } else if (name === 'chat') {
+      document.getElementById('chatScreen').classList.add('active');
+      document.querySelector('.navitem[data-screen="chat"]').classList.add('active');
+      loadChatHistory();
     } else if (name === 'profile') {
       document.getElementById('screen-profile').classList.add('active');
       document.querySelector('.navitem[data-screen="profile"]').classList.add('active');
@@ -564,7 +625,7 @@
       const profileRes = await fetch(SERVER_URL + '/profile/me', { headers: authHeaders() });
       if (profileRes.status === 401) return logout();
       if (profileRes.status === 404) {
-        showScreen('onboard');
+        showScreen('convoOnboard');
         return;
       }
       state.profile = await profileRes.json();
@@ -582,7 +643,7 @@
           return;
         }
       }
-      showScreen('onboard');
+      showScreen('convoOnboard');
     } catch (e) {
       showScreen('login');
     }
@@ -604,40 +665,142 @@
     btn.textContent = 'Generating your world…';
 
     try {
-      let profile = state.profile;
-      if (!profile) {
-        const profileRes = await fetch(SERVER_URL + '/profile/', {
-          method: 'POST',
-          headers: authHeaders({ 'Content-Type': 'application/json' }),
-          body: JSON.stringify({
-            name: state.user ? `${state.user.first_name} ${state.user.last_name}` : 'You',
-            goal,
-            interests: interests ? interests.split(',').map(s => s.trim()).filter(Boolean) : [],
-          }),
-        });
-        if (!profileRes.ok) throw new Error('Could not create profile');
-        profile = await profileRes.json();
-      }
-      state.profile = profile;
-
-      const worldRes = await fetch(SERVER_URL + '/world/generate/' + profile.id, {
-        method: 'POST',
-        headers: authHeaders(),
+      await createProfileAndEnterWorld({
+        name: state.user ? `${state.user.first_name} ${state.user.last_name}` : 'You',
+        goal,
+        interests: interests ? interests.split(',').map(s => s.trim()).filter(Boolean) : [],
+        background: '',
+        education: '',
       });
-      if (!worldRes.ok) throw new Error('Could not generate world');
-      state.world = await worldRes.json();
-      localStorage.setItem('nexus_world_id', state.world.id);
-
-      document.getElementById('bottomnav').style.display = 'flex';
-      showScreen('home');
-      await checkinGame();
-      renderHome();
-      await fetchSituation();
     } catch (e) {
       errBox.textContent = 'Something went wrong — check the server is running.';
       errBox.style.display = 'block';
       btn.disabled = false;
       btn.textContent = 'Enter your world';
+    }
+  }
+
+  // Shared by both the manual form and conversational onboarding once a
+  // goal (either typed or extracted from conversation) is ready to become
+  // a real profile + world.
+  async function createProfileAndEnterWorld({ name, goal, interests, background, education }) {
+    let profile = state.profile;
+    if (!profile) {
+      const profileRes = await fetch(SERVER_URL + '/profile/', {
+        method: 'POST',
+        headers: authHeaders({ 'Content-Type': 'application/json' }),
+        body: JSON.stringify({ name, goal, interests, background, education }),
+      });
+      if (!profileRes.ok) throw new Error('Could not create profile');
+      profile = await profileRes.json();
+    }
+    state.profile = profile;
+
+    const worldRes = await fetch(SERVER_URL + '/world/generate/' + profile.id, {
+      method: 'POST',
+      headers: authHeaders(),
+    });
+    if (!worldRes.ok) throw new Error('Could not generate world');
+    state.world = await worldRes.json();
+    localStorage.setItem('nexus_world_id', state.world.id);
+
+    document.getElementById('bottomnav').style.display = 'flex';
+    showScreen('home');
+    await checkinGame();
+    renderHome();
+    await fetchSituation();
+  }
+
+  function renderConvoOnboard() {
+    const container = document.getElementById('convo-messages');
+    if (state.onboardingHistory.length === 0) {
+      container.innerHTML = '';
+    }
+  }
+
+  async function sendOnboardingMessage() {
+    const input = document.getElementById('convo-input');
+    const btn = document.getElementById('convo-send-btn');
+    const text = input.value.trim();
+    if (!text) return;
+
+    const container = document.getElementById('convo-messages');
+    input.value = '';
+    btn.disabled = true;
+
+    container.innerHTML += `<div class="chat-bubble user">${escapeHtml(text)}</div>`;
+    container.scrollTop = container.scrollHeight;
+
+    try {
+      const res = await fetch(SERVER_URL + '/onboarding/chat', {
+        method: 'POST',
+        headers: authHeaders({ 'Content-Type': 'application/json' }),
+        body: JSON.stringify({ history: state.onboardingHistory, message: text }),
+      });
+      const result = await res.json();
+
+      state.onboardingHistory.push({ role: 'user', content: text });
+      state.onboardingHistory.push({ role: 'assistant', content: result.reply });
+
+      container.innerHTML += `<div class="chat-bubble assistant">${escapeHtml(result.reply)}</div>`;
+      container.scrollTop = container.scrollHeight;
+
+      if (!result.ai_available) {
+        // Leave the skip link as the obvious way out - no extra UI needed,
+        // the assistant bubble itself already explains what happened.
+      }
+
+      if (result.ready_to_build && result.user_world_model) {
+        state.onboardingModel = result.user_world_model;
+        renderOnboardingSummary();
+      }
+    } catch (e) {
+      container.innerHTML += `<div class="chat-bubble assistant">Something went wrong reaching NEXUS. Try again, or use the quick form instead.</div>`;
+    } finally {
+      btn.disabled = false;
+    }
+  }
+
+  function renderOnboardingSummary() {
+    const m = state.onboardingModel;
+    const summaryContainer = document.getElementById('convo-summary');
+    const interestsList = (m.interests || []).map(i =>
+      `<div class="convo-check-item"><span class="tick">✓</span><span>${escapeHtml(i)}</span></div>`
+    ).join('');
+
+    summaryContainer.innerHTML = `
+      <div class="convo-summary-card">
+        <h4>Here's what I've picked up so far:</h4>
+        ${m.education_or_background ? `<div class="convo-check-item"><span class="tick">✓</span><span>${escapeHtml(m.education_or_background)}</span></div>` : ''}
+        ${interestsList}
+        <div class="convo-check-item"><span class="tick">✓</span><span>${escapeHtml(m.primary_goal || '')}</span></div>
+        ${m.background_summary ? `<div class="convo-check-item"><span class="tick">✓</span><span>${escapeHtml(m.background_summary)}</span></div>` : ''}
+        <button class="convo-build-btn" id="convo-build-btn" onclick="confirmWorldModel()">Yes, create my world ✨</button>
+      </div>
+    `;
+    summaryContainer.style.display = 'block';
+  }
+
+  async function confirmWorldModel() {
+    const m = state.onboardingModel;
+    const btn = document.getElementById('convo-build-btn');
+    if (!m) return;
+
+    btn.disabled = true;
+    btn.textContent = 'Generating your world…';
+
+    try {
+      await createProfileAndEnterWorld({
+        name: state.user ? `${state.user.first_name} ${state.user.last_name}` : 'You',
+        goal: m.primary_goal || 'Grow and explore new opportunities',
+        interests: m.interests || [],
+        background: m.background_summary || '',
+        education: m.education_or_background || '',
+      });
+    } catch (e) {
+      btn.disabled = false;
+      btn.textContent = 'Yes, create my world ✨';
+      document.getElementById('convo-messages').innerHTML += `<div class="chat-bubble assistant">Something went wrong creating your world — try again.</div>`;
     }
   }
 
@@ -841,6 +1004,69 @@
         <div class="zone-val">${val} / 100</div>
       </div>
     `).join('') + `</div>`;
+  }
+
+  let chatHistoryLoaded = false;
+
+  async function loadChatHistory() {
+    const container = document.getElementById('chat-messages');
+    if (chatHistoryLoaded) return; // only fetch once per session; new messages append live
+    try {
+      const res = await fetch(SERVER_URL + '/chat/', { headers: authHeaders() });
+      if (!res.ok) throw new Error();
+      state.chatMessages = await res.json();
+      chatHistoryLoaded = true;
+      renderChat();
+    } catch (e) {
+      container.innerHTML = '<div class="empty-note">Could not load conversation.</div>';
+    }
+  }
+
+  function renderChat() {
+    const container = document.getElementById('chat-messages');
+    const messages = state.chatMessages || [];
+    if (messages.length === 0) {
+      container.innerHTML = '<div class="empty-note">Ask NEXUS AI anything about your goal, decisions, or what to do next.</div>';
+      return;
+    }
+    container.innerHTML = messages.map(m =>
+      `<div class="chat-bubble ${m.role === 'user' ? 'user' : 'assistant'}">${escapeHtml(m.content)}</div>`
+    ).join('');
+    container.scrollTop = container.scrollHeight;
+  }
+
+  async function sendChatMessage() {
+    const input = document.getElementById('chat-input');
+    const btn = document.getElementById('chat-send-btn');
+    const text = input.value.trim();
+    if (!text) return;
+
+    input.value = '';
+    btn.disabled = true;
+
+    state.chatMessages = state.chatMessages || [];
+    state.chatMessages.push({ id: 'temp-' + Date.now(), role: 'user', content: text });
+    renderChat();
+
+    try {
+      const res = await fetch(SERVER_URL + '/chat/', {
+        method: 'POST',
+        headers: authHeaders({ 'Content-Type': 'application/json' }),
+        body: JSON.stringify({ message: text }),
+      });
+      if (!res.ok) throw new Error();
+      const result = await res.json();
+      // Replace the temp user message with the real one, then add the reply.
+      state.chatMessages.pop();
+      state.chatMessages.push(result.user_message);
+      state.chatMessages.push(result.assistant_message);
+      renderChat();
+    } catch (e) {
+      state.chatMessages.push({ id: 'err-' + Date.now(), role: 'assistant', content: 'Could not reach NEXUS AI - try again in a moment.' });
+      renderChat();
+    } finally {
+      btn.disabled = false;
+    }
   }
 
   function renderSkills() {
