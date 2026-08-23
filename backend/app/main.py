@@ -6,7 +6,7 @@ from fastapi.responses import FileResponse
 from fastapi.staticfiles import StaticFiles
 
 from app.database import Base, engine
-from app.routers import auth, profile, world, simulation, whatif, game, missions, daily_challenge, chat, onboarding
+from app.routers import auth, profile, world, simulation, whatif, game, missions, daily_challenge, chat, onboarding, learn, opportunities
 
 Base.metadata.create_all(bind=engine)
 
@@ -33,6 +33,8 @@ app.include_router(missions.router)
 app.include_router(daily_challenge.router)
 app.include_router(chat.router)
 app.include_router(onboarding.router)
+app.include_router(learn.router)
+app.include_router(opportunities.router)
 
 STATIC_DIR = os.path.join(os.path.dirname(__file__), "..", "static")
 
@@ -47,4 +49,4 @@ def root():
 
 @app.get("/health")
 def health():
-    return {"status": "NEXUS API running", "docs": "/docs"}
+    return {"status": "NEXUS API running", "docs": "/docs"}l
