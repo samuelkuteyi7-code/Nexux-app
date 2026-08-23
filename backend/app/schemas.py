@@ -178,3 +178,11 @@ class OnboardingChatResponse(BaseModel):
     ready_to_build: bool
     user_world_model: dict | None = None
     ai_available: bool
+class OpportunityOut(BaseModel):
+    title: str
+    company: str
+    location: str
+    url: str
+    source: str
+    match_pct: int
+    tags: list[str]
