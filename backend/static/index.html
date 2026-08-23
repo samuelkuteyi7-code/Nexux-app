@@ -196,6 +196,26 @@
   .convo-check-item .tick { color:var(--green); flex-shrink:0; }
   .convo-build-btn { width:100%; padding:13px; border:none; border-radius:12px; background:var(--grad); color:#fff; font-family:'Space Grotesk',sans-serif; font-weight:700; font-size:13.5px; margin-top:8px; cursor:pointer; }
   .convo-build-btn:disabled { opacity:0.6; }
+
+  /* ---- learn ---- */
+  .rec-card { background:var(--elevated); border:1px solid var(--border); border-radius:12px; padding:12px; margin-bottom:10px; }
+  .rec-card:last-child { margin-bottom:0; }
+  .rec-top { display:flex; justify-content:space-between; align-items:flex-start; gap:8px; margin-bottom:6px; }
+  .rec-title { font-size:12.5px; font-weight:700; }
+  .rec-type-tag { font-size:9.5px; font-weight:700; text-transform:uppercase; letter-spacing:0.3px; padding:3px 7px; border-radius:999px; background:rgba(139,92,246,0.15); color:var(--violet); white-space:nowrap; }
+  .rec-reason { font-size:11.5px; color:var(--muted); line-height:1.4; margin-bottom:9px; }
+  .rec-action-btn { display:inline-block; background:var(--grad); color:#fff; text-decoration:none; border-radius:8px; padding:6px 12px; font-size:11px; font-weight:700; }
+
+  /* ---- opportunities ---- */
+  .opp-card { background:var(--surface); border:1px solid var(--border); border-radius:14px; padding:14px; margin-bottom:12px; }
+  .opp-top { display:flex; justify-content:space-between; align-items:flex-start; gap:10px; margin-bottom:4px; }
+  .opp-title { font-size:13px; font-weight:700; }
+  .opp-company { font-size:11.5px; color:var(--muted); margin-bottom:8px; }
+  .opp-match { font-size:11px; font-weight:800; color:var(--green); white-space:nowrap; }
+  .opp-tags { display:flex; flex-wrap:wrap; gap:5px; margin-bottom:10px; }
+  .opp-tag { font-size:9.5px; background:var(--elevated); color:var(--muted); padding:3px 8px; border-radius:999px; }
+  .opp-bottom { display:flex; justify-content:space-between; align-items:center; }
+  .opp-source { font-size:10px; color:var(--muted2); }
 </style>
 </head>
 <body>
@@ -349,6 +369,16 @@
         <div id="daily-challenge-content"><div class="empty-note">Loading today's challenge…</div></div>
       </div>
 
+      <div class="card" style="cursor:pointer;" onclick="showScreen('learn')">
+        <h3>📚 Learn <span style="margin-left:auto;font-size:11px;color:var(--muted);font-weight:400;">View all →</span></h3>
+        <div style="font-size:12px;color:var(--muted);">Personalized recommendations based on your weakest skills.</div>
+      </div>
+
+      <div class="card" style="cursor:pointer;" onclick="showScreen('opportunities')">
+        <h3>💼 Opportunities <span style="margin-left:auto;font-size:11px;color:var(--muted);font-weight:400;">View all →</span></h3>
+        <div style="font-size:12px;color:var(--muted);">Real job listings matched to your profile.</div>
+      </div>
+
       <div class="card">
         <h3>Recent History</h3>
         <div id="log-list"><div class="empty-note">No decisions yet — your choices will show up here.</div></div>
@@ -396,6 +426,45 @@
           <div class="stat"><div class="v" id="wm-missions">-</div><div class="l">Missions</div></div>
           <div class="stat"><div class="v" id="wm-streak">-</div><div class="l">Streak</div></div>
         </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ OPPORTUNITIES ============ -->
+  <div class="screen" id="opportunitiesScreen">
+    <div class="sub-header"><span class="back" onclick="showScreen('home')">←</span><h2>Opportunities</h2></div>
+    <div class="content">
+      <div class="card">
+        <h3>Your Profile</h3>
+        <div id="opp-profile-summary" style="font-size:12.5px;color:var(--muted);line-height:1.8;"></div>
+        <div style="font-size:10.5px;color:var(--muted2);margin-top:8px;">CV upload isn't built yet — matching uses your NEXUS profile (goal, interests, skills) for now.</div>
+      </div>
+
+      <div class="card">
+        <h3>Find Real Opportunities</h3>
+        <div style="display:flex;gap:8px;margin-bottom:2px;">
+          <input type="text" id="opp-query" placeholder="Job title or keywords…" style="flex:1;padding:11px 13px;border-radius:10px;border:1px solid var(--border-strong);background:rgba(255,255,255,0.05);color:#fff;font-size:13px;">
+          <button onclick="searchOpportunities()" id="opp-search-btn" style="background:var(--grad);color:#fff;border:none;border-radius:10px;padding:0 16px;font-weight:700;font-size:12.5px;cursor:pointer;">Search</button>
+        </div>
+        <div style="font-size:10.5px;color:var(--muted2);margin-top:6px;">Leave blank to search based on your goal. Real listings from Remotive + Arbeitnow.</div>
+      </div>
+
+      <div id="opp-results"><div class="empty-note">Search above to find real opportunities.</div></div>
+    </div>
+  </div>
+
+  <!-- ============ LEARN ============ -->
+  <div class="screen" id="learnScreen">
+    <div class="sub-header"><span class="back" onclick="showScreen('home')">←</span><h2>Learn</h2></div>
+    <div class="content">
+      <div class="card">
+        <h3>Your Skill Map</h3>
+        <div id="learn-skills-list"><div class="empty-note">No skills developed yet.</div></div>
+      </div>
+
+      <div class="card">
+        <h3>Recommended for You</h3>
+        <div id="learn-recs-list"><div class="empty-note">Loading recommendations…</div></div>
       </div>
     </div>
   </div>
@@ -514,6 +583,12 @@
       document.getElementById('chatScreen').classList.add('active');
       document.querySelector('.navitem[data-screen="chat"]').classList.add('active');
       loadChatHistory();
+    } else if (name === 'learn') {
+      document.getElementById('learnScreen').classList.add('active');
+      loadLearnScreen();
+    } else if (name === 'opportunities') {
+      document.getElementById('opportunitiesScreen').classList.add('active');
+      loadOpportunitiesScreen();
     } else if (name === 'profile') {
       document.getElementById('screen-profile').classList.add('active');
       document.querySelector('.navitem[data-screen="profile"]').classList.add('active');
@@ -1004,6 +1079,126 @@
         <div class="zone-val">${val} / 100</div>
       </div>
     `).join('') + `</div>`;
+  }
+
+  function loadLearnScreen() {
+    renderLearnSkills();
+    fetchLearnRecommendations();
+  }
+
+  function loadOpportunitiesScreen() {
+    renderOppProfileSummary();
+  }
+
+  function renderOppProfileSummary() {
+    const p = state.profile;
+    const skills = (state.world && state.world.state.skills) || {};
+    const container = document.getElementById('opp-profile-summary');
+    if (!p) {
+      container.innerHTML = 'No profile data yet.';
+      return;
+    }
+    const skillNames = Object.keys(skills).join(', ') || 'none yet';
+    container.innerHTML = `
+      <div><strong style="color:var(--text)">Goal:</strong> ${escapeHtml(p.goal)}</div>
+      <div><strong style="color:var(--text)">Interests:</strong> ${p.interests.length ? p.interests.map(escapeHtml).join(', ') : '—'}</div>
+      <div><strong style="color:var(--text)">Skills:</strong> ${escapeHtml(skillNames)}</div>
+    `;
+  }
+
+  async function searchOpportunities() {
+    const query = document.getElementById('opp-query').value.trim();
+    const btn = document.getElementById('opp-search-btn');
+    const container = document.getElementById('opp-results');
+
+    btn.disabled = true;
+    btn.textContent = '…';
+    container.innerHTML = '<div class="empty-note">Searching real listings…</div>';
+
+    try {
+      const url = SERVER_URL + '/opportunities/jobs' + (query ? '?query=' + encodeURIComponent(query) : '');
+      const res = await fetch(url, { headers: authHeaders() });
+      if (!res.ok) throw new Error();
+      const results = await res.json();
+      renderOpportunities(results);
+    } catch (e) {
+      container.innerHTML = '<div class="empty-note">Could not load opportunities right now — try again shortly.</div>';
+    } finally {
+      btn.disabled = false;
+      btn.textContent = 'Search';
+    }
+  }
+
+  function renderOpportunities(results) {
+    const container = document.getElementById('opp-results');
+    if (!results || results.length === 0) {
+      container.innerHTML = '<div class="empty-note">No listings found for that search. Try different keywords.</div>';
+      return;
+    }
+    container.innerHTML = results.map(r => `
+      <div class="opp-card">
+        <div class="opp-top">
+          <span class="opp-title">${escapeHtml(r.title)}</span>
+          <span class="opp-match">${r.match_pct}% match</span>
+        </div>
+        <div class="opp-company">${escapeHtml(r.company || 'Company not listed')} · ${escapeHtml(r.location)}</div>
+        ${r.tags.length ? `<div class="opp-tags">${r.tags.map(t => `<span class="opp-tag">${escapeHtml(t)}</span>`).join('')}</div>` : ''}
+        <div class="opp-bottom">
+          <span class="opp-source">via ${escapeHtml(r.source)}</span>
+          <a class="rec-action-btn" href="${r.url}" target="_blank" rel="noopener">View & Apply →</a>
+        </div>
+      </div>
+    `).join('');
+  }
+
+  function renderLearnSkills() {
+    const container = document.getElementById('learn-skills-list');
+    const skills = (state.world && state.world.state.skills) || {};
+    const entries = Object.entries(skills).sort((a, b) => b[1] - a[1]);
+    if (entries.length === 0) {
+      container.innerHTML = '<div class="empty-note">No skills developed yet.</div>';
+      return;
+    }
+    container.innerHTML = entries.map(([name, val], i) => `
+      <div class="skill-row">
+        <div class="name"><span class="dot" style="background:${SKILL_COLORS[i % SKILL_COLORS.length]}"></span>${escapeHtml(name)}</div>
+        <div class="skill-bar"><div class="skill-bar-fill" style="width:${val}%;background:${SKILL_COLORS[i % SKILL_COLORS.length]}"></div></div>
+        <div class="val">${val}</div>
+      </div>
+    `).join('');
+  }
+
+  async function fetchLearnRecommendations() {
+    const container = document.getElementById('learn-recs-list');
+    try {
+      const res = await fetch(SERVER_URL + '/learn/recommendations', { headers: authHeaders() });
+      if (!res.ok) throw new Error();
+      const recs = await res.json();
+      renderLearnRecommendations(recs);
+    } catch (e) {
+      container.innerHTML = '<div class="empty-note">Could not load recommendations.</div>';
+    }
+  }
+
+  function renderLearnRecommendations(recs) {
+    const container = document.getElementById('learn-recs-list');
+    if (!recs || recs.length === 0) {
+      container.innerHTML = '<div class="empty-note">No recommendations yet.</div>';
+      return;
+    }
+    container.innerHTML = recs.map(r => {
+      const searchUrl = 'https://www.google.com/search?q=' + encodeURIComponent(r.title + ' ' + r.resource_type);
+      return `
+        <div class="rec-card">
+          <div class="rec-top">
+            <span class="rec-title">${escapeHtml(r.title)}</span>
+            <span class="rec-type-tag">${escapeHtml(r.resource_type)}</span>
+          </div>
+          <div class="rec-reason">${escapeHtml(r.reason)}</div>
+          <a class="rec-action-btn" href="${searchUrl}" target="_blank" rel="noopener">Find Resources →</a>
+        </div>
+      `;
+    }).join('');
   }
 
   let chatHistoryLoaded = false;
