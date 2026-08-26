@@ -14,6 +14,8 @@ here rather than being faked - that's future work, not a shortcut
 taken silently.
 """
 
+from datetime import datetime, timezone
+
 import httpx
 
 REMOTIVE_URL = "https://remotive.com/api/remote-jobs"
@@ -27,8 +29,19 @@ def fetch_remotive(query: str) -> list[dict]:
         resp = httpx.get(REMOTIVE_URL, params={"search": query, "limit": 20}, timeout=REQUEST_TIMEOUT)
         resp.raise_for_status()
         jobs = resp.json().get("jobs", [])
-        return [
-            {
+        results = []
+        for j in jobs:
+            posted_at = None
+            raw_date = j.get("publication_date")
+            if raw_date:
+                try:
+                    posted_at = datetime.strptime(raw_date, "%Y-%m-%d %H:%M:%S").replace(
+                        tzinfo=timezone.utc
+                    ).isoformat()
+                except ValueError:
+                    posted_at = None
+
+            results.append({
                 "title": j.get("title", ""),
                 "company": j.get("company_name", ""),
                 "location": j.get("candidate_required_location", "Remote"),
@@ -36,9 +49,9 @@ def fetch_remotive(query: str) -> list[dict]:
                 "description": (j.get("description") or "")[:600],
                 "tags": j.get("tags", []) or [],
                 "source": "Remotive",
-            }
-            for j in jobs
-        ]
+                "posted_at": posted_at,
+            })
+        return results
     except Exception:
         return []
 
@@ -57,6 +70,15 @@ def fetch_arbeitnow(query: str) -> list[dict]:
             desc = j.get("description", "") or ""
             if query_lower and query_lower not in (title + desc).lower():
                 continue
+
+            posted_at = None
+            raw_ts = j.get("created_at")
+            if raw_ts:
+                try:
+                    posted_at = datetime.fromtimestamp(raw_ts, tz=timezone.utc).isoformat()
+                except (ValueError, OSError, TypeError):
+                    posted_at = None
+
             results.append({
                 "title": title,
                 "company": j.get("company_name", ""),
@@ -65,6 +87,7 @@ def fetch_arbeitnow(query: str) -> list[dict]:
                 "description": desc[:600],
                 "tags": j.get("tags", []) or [],
                 "source": "Arbeitnow",
+                "posted_at": posted_at,
             })
         return results[:20]
     except Exception:
