@@ -207,15 +207,33 @@
   .rec-action-btn { display:inline-block; background:var(--grad); color:#fff; text-decoration:none; border-radius:8px; padding:6px 12px; font-size:11px; font-weight:700; }
 
   /* ---- opportunities ---- */
-  .opp-card { background:var(--surface); border:1px solid var(--border); border-radius:14px; padding:14px; margin-bottom:12px; }
-  .opp-top { display:flex; justify-content:space-between; align-items:flex-start; gap:10px; margin-bottom:4px; }
-  .opp-title { font-size:13px; font-weight:700; }
-  .opp-company { font-size:11.5px; color:var(--muted); margin-bottom:8px; }
+  .opp-header { display:flex; align-items:center; gap:10px; }
+  .opp-header h2 { flex:1; }
+  .opp-header-icons { display:flex; gap:6px; }
+  .opp-icon-btn { width:32px; height:32px; border-radius:50%; border:1px solid var(--border-strong); background:var(--surface); color:var(--text); font-size:13px; cursor:pointer; }
+
+  .opp-cv-card { display:flex; align-items:center; gap:12px; background:var(--surface); border:1px solid var(--border); border-radius:14px; padding:14px; margin-top:16px; }
+  .opp-cv-icon { width:42px; height:42px; border-radius:10px; background:var(--elevated); display:flex; align-items:center; justify-content:center; font-size:19px; flex-shrink:0; }
+  .opp-cv-title { font-size:13px; font-weight:700; }
+  .opp-cv-sub { font-size:11px; color:var(--muted); margin-top:2px; }
+  .opp-cv-actions { display:flex; gap:8px; margin-top:10px; }
+  .opp-outline-btn { flex:1; padding:9px; border-radius:9px; border:1px solid var(--border-strong); background:transparent; color:var(--text); font-size:11.5px; font-weight:600; cursor:pointer; }
+  .opp-hint { font-size:10.5px; color:var(--muted2); margin:8px 0 16px; line-height:1.4; }
+  .opp-search-input { width:100%; padding:11px 14px; border-radius:999px; border:1px solid var(--border-strong); background:rgba(255,255,255,0.05); color:#fff; font-size:13px; margin-bottom:6px; }
+  .opp-section-title { font-family:'Space Grotesk',sans-serif; font-size:14px; margin:4px 0 10px; }
+
+  .opp-card { display:flex; gap:11px; background:var(--surface); border:1px solid var(--border); border-radius:14px; padding:13px; margin-bottom:10px; }
+  .opp-icon-square { width:38px; height:38px; border-radius:10px; display:flex; align-items:center; justify-content:center; font-size:16px; flex-shrink:0; color:#fff; }
+  .opp-card-body { flex:1; min-width:0; }
+  .opp-top { display:flex; justify-content:space-between; align-items:flex-start; gap:8px; margin-bottom:2px; }
+  .opp-title { font-size:12.5px; font-weight:700; }
   .opp-match { font-size:11px; font-weight:800; color:var(--green); white-space:nowrap; }
-  .opp-tags { display:flex; flex-wrap:wrap; gap:5px; margin-bottom:10px; }
-  .opp-tag { font-size:9.5px; background:var(--elevated); color:var(--muted); padding:3px 8px; border-radius:999px; }
+  .opp-company { font-size:11px; color:var(--muted); margin-bottom:7px; }
+  .opp-tags { display:flex; flex-wrap:wrap; gap:5px; margin-bottom:9px; }
+  .opp-tag { font-size:9px; background:var(--elevated); color:var(--muted); padding:3px 7px; border-radius:999px; }
   .opp-bottom { display:flex; justify-content:space-between; align-items:center; }
-  .opp-source { font-size:10px; color:var(--muted2); }
+  .opp-source { font-size:9.5px; color:var(--muted2); }
+  .opp-view-more-btn { width:100%; padding:12px; border:none; border-radius:12px; background:var(--grad); color:#fff; font-family:'Space Grotesk',sans-serif; font-weight:700; font-size:13px; cursor:pointer; margin-top:6px; }
 </style>
 </head>
 <body>
@@ -432,24 +450,33 @@
 
   <!-- ============ OPPORTUNITIES ============ -->
   <div class="screen" id="opportunitiesScreen">
-    <div class="sub-header"><span class="back" onclick="showScreen('home')">←</span><h2>Opportunities</h2></div>
+    <div class="sub-header opp-header">
+      <span class="back" onclick="showScreen('home')">←</span>
+      <h2>Opportunities</h2>
+      <div class="opp-header-icons">
+        <button class="opp-icon-btn" onclick="document.getElementById('opp-query').focus()" title="Search">🔍</button>
+      </div>
+    </div>
     <div class="content">
-      <div class="card">
-        <h3>Your Profile</h3>
-        <div id="opp-profile-summary" style="font-size:12.5px;color:var(--muted);line-height:1.8;"></div>
-        <div style="font-size:10.5px;color:var(--muted2);margin-top:8px;">CV upload isn't built yet — matching uses your NEXUS profile (goal, interests, skills) for now.</div>
-      </div>
-
-      <div class="card">
-        <h3>Find Real Opportunities</h3>
-        <div style="display:flex;gap:8px;margin-bottom:2px;">
-          <input type="text" id="opp-query" placeholder="Job title or keywords…" style="flex:1;padding:11px 13px;border-radius:10px;border:1px solid var(--border-strong);background:rgba(255,255,255,0.05);color:#fff;font-size:13px;">
-          <button onclick="searchOpportunities()" id="opp-search-btn" style="background:var(--grad);color:#fff;border:none;border-radius:10px;padding:0 16px;font-weight:700;font-size:12.5px;cursor:pointer;">Search</button>
+      <div class="opp-cv-card">
+        <div class="opp-cv-icon">📄</div>
+        <div class="opp-cv-info">
+          <div class="opp-cv-title">Your NEXUS Profile</div>
+          <div class="opp-cv-sub" id="opp-cv-updated">Used for matching</div>
         </div>
-        <div style="font-size:10.5px;color:var(--muted2);margin-top:6px;">Leave blank to search based on your goal. Real listings from Remotive + Arbeitnow.</div>
       </div>
+      <div class="opp-cv-actions">
+        <button class="opp-outline-btn" onclick="showScreen('profile')">View Profile</button>
+        <button class="opp-outline-btn" onclick="showScreen('profile')">Edit Details</button>
+      </div>
+      <div class="opp-hint">CV upload isn't built yet — matching uses your NEXUS profile (goal, interests, skills) for now.</div>
 
-      <div id="opp-results"><div class="empty-note">Search above to find real opportunities.</div></div>
+      <input type="text" id="opp-query" placeholder="Search job title or keywords…" class="opp-search-input" onkeydown="if(event.key==='Enter') searchOpportunities();">
+      <div class="opp-hint" style="margin-bottom:14px;">Leave blank to search based on your goal. Real listings from Remotive + Arbeitnow.</div>
+
+      <h3 class="opp-section-title">Matched for You</h3>
+      <div id="opp-results"><div class="empty-note">Searching real listings…</div></div>
+      <button class="opp-view-more-btn" id="opp-view-more-btn" onclick="expandOpportunities()" style="display:none;">View More Opportunities</button>
     </div>
   </div>
 
@@ -1086,69 +1113,96 @@
     fetchLearnRecommendations();
   }
 
+  let oppAllResults = [];
+  let oppExpanded = false;
+  const OPP_PREVIEW_COUNT = 3;
+  const OPP_ICON_COLORS = ['#8B5CF6', '#5B8DEF', '#F87171', '#34D399', '#FBBF24'];
+  const OPP_ICONS = ['💻', '📊', '✍️', '🎯', '🚀'];
+
   function loadOpportunitiesScreen() {
     renderOppProfileSummary();
+    searchOpportunities(); // auto-loads results based on the user's goal, like the mockup
   }
 
   function renderOppProfileSummary() {
-    const p = state.profile;
-    const skills = (state.world && state.world.state.skills) || {};
-    const container = document.getElementById('opp-profile-summary');
-    if (!p) {
-      container.innerHTML = 'No profile data yet.';
-      return;
-    }
-    const skillNames = Object.keys(skills).join(', ') || 'none yet';
-    container.innerHTML = `
-      <div><strong style="color:var(--text)">Goal:</strong> ${escapeHtml(p.goal)}</div>
-      <div><strong style="color:var(--text)">Interests:</strong> ${p.interests.length ? p.interests.map(escapeHtml).join(', ') : '—'}</div>
-      <div><strong style="color:var(--text)">Skills:</strong> ${escapeHtml(skillNames)}</div>
-    `;
+    document.getElementById('opp-cv-updated').textContent =
+      state.profile ? `Goal: ${state.profile.goal}` : 'No profile yet';
   }
 
   async function searchOpportunities() {
     const query = document.getElementById('opp-query').value.trim();
-    const btn = document.getElementById('opp-search-btn');
     const container = document.getElementById('opp-results');
+    const viewMoreBtn = document.getElementById('opp-view-more-btn');
 
-    btn.disabled = true;
-    btn.textContent = '…';
     container.innerHTML = '<div class="empty-note">Searching real listings…</div>';
+    viewMoreBtn.style.display = 'none';
+    oppExpanded = false;
 
     try {
       const url = SERVER_URL + '/opportunities/jobs' + (query ? '?query=' + encodeURIComponent(query) : '');
       const res = await fetch(url, { headers: authHeaders() });
       if (!res.ok) throw new Error();
-      const results = await res.json();
-      renderOpportunities(results);
+      oppAllResults = await res.json();
+      renderOpportunities();
     } catch (e) {
       container.innerHTML = '<div class="empty-note">Could not load opportunities right now — try again shortly.</div>';
-    } finally {
-      btn.disabled = false;
-      btn.textContent = 'Search';
     }
   }
 
-  function renderOpportunities(results) {
+  function expandOpportunities() {
+    oppExpanded = true;
+    renderOpportunities();
+  }
+
+  function timeAgo(isoString) {
+    if (!isoString) return null;
+    const then = new Date(isoString);
+    const diffMs = Date.now() - then.getTime();
+    const diffHours = Math.floor(diffMs / 3600000);
+    if (diffHours < 1) return 'just now';
+    if (diffHours < 24) return `${diffHours}h ago`;
+    const diffDays = Math.floor(diffHours / 24);
+    if (diffDays < 30) return `${diffDays}d ago`;
+    return `${Math.floor(diffDays / 30)}mo ago`;
+  }
+
+  function renderOpportunities() {
     const container = document.getElementById('opp-results');
+    const viewMoreBtn = document.getElementById('opp-view-more-btn');
+    const results = oppAllResults;
+
     if (!results || results.length === 0) {
-      container.innerHTML = '<div class="empty-note">No listings found for that search. Try different keywords.</div>';
+      container.innerHTML = '<div class="empty-note">No listings found. Try different keywords.</div>';
+      viewMoreBtn.style.display = 'none';
       return;
     }
-    container.innerHTML = results.map(r => `
-      <div class="opp-card">
-        <div class="opp-top">
-          <span class="opp-title">${escapeHtml(r.title)}</span>
-          <span class="opp-match">${r.match_pct}% match</span>
+
+    const visible = oppExpanded ? results : results.slice(0, OPP_PREVIEW_COUNT);
+
+    container.innerHTML = visible.map((r, i) => {
+      const ago = timeAgo(r.posted_at);
+      const color = OPP_ICON_COLORS[i % OPP_ICON_COLORS.length];
+      const icon = OPP_ICONS[i % OPP_ICONS.length];
+      return `
+        <div class="opp-card">
+          <div class="opp-icon-square" style="background:${color}">${icon}</div>
+          <div class="opp-card-body">
+            <div class="opp-top">
+              <span class="opp-title">${escapeHtml(r.title)}</span>
+              <span class="opp-match">${r.match_pct}% match</span>
+            </div>
+            <div class="opp-company">${escapeHtml(r.company || 'Company not listed')} · ${escapeHtml(r.location)}</div>
+            ${r.tags.length ? `<div class="opp-tags">${r.tags.map(t => `<span class="opp-tag">${escapeHtml(t)}</span>`).join('')}</div>` : ''}
+            <div class="opp-bottom">
+              <span class="opp-source">${escapeHtml(r.source)}${ago ? ' · ' + ago : ''}</span>
+              <a class="rec-action-btn" href="${r.url}" target="_blank" rel="noopener">View & Apply →</a>
+            </div>
+          </div>
         </div>
-        <div class="opp-company">${escapeHtml(r.company || 'Company not listed')} · ${escapeHtml(r.location)}</div>
-        ${r.tags.length ? `<div class="opp-tags">${r.tags.map(t => `<span class="opp-tag">${escapeHtml(t)}</span>`).join('')}</div>` : ''}
-        <div class="opp-bottom">
-          <span class="opp-source">via ${escapeHtml(r.source)}</span>
-          <a class="rec-action-btn" href="${r.url}" target="_blank" rel="noopener">View & Apply →</a>
-        </div>
-      </div>
-    `).join('');
+      `;
+    }).join('');
+
+    viewMoreBtn.style.display = (!oppExpanded && results.length > OPP_PREVIEW_COUNT) ? 'block' : 'none';
   }
 
   function renderLearnSkills() {
