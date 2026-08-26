@@ -52,6 +52,7 @@ def get_matched_jobs(
             source=job["source"],
             match_pct=match_pct,
             tags=job.get("tags", [])[:5],
+            posted_at=job.get("posted_at"),
         ))
 
     results.sort(key=lambda r: r.match_pct, reverse=True)
