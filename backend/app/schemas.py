@@ -186,3 +186,4 @@ class OpportunityOut(BaseModel):
     source: str
     match_pct: int
     tags: list[str]
+    posted_at: str | None = None
